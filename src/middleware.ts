@@ -1,20 +1,32 @@
-import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-const protectedPrefixes = ["/listings/new", "/messages", "/me", "/admin", "/auctions/new"];
+function hasSessionCookie(req: NextRequest) {
+  return Boolean(
+    req.cookies.get("authjs.session-token")?.value ||
+      req.cookies.get("__Secure-authjs.session-token")?.value ||
+      req.cookies.get("__Host-authjs.session-token")?.value ||
+      req.cookies.get("next-auth.session-token")?.value ||
+      req.cookies.get("__Secure-next-auth.session-token")?.value,
+  );
+}
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const needsAuth =
-    protectedPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
-    /\/listings\/[^/]+\/edit$/.test(pathname);
+export function middleware(req: NextRequest) {
+  if (hasSessionCookie(req)) return NextResponse.next();
 
-  if (needsAuth && !req.auth) {
-    const login = new URL("/login", req.nextUrl.origin);
-    login.searchParams.set("callbackUrl", pathname);
-    return Response.redirect(login);
-  }
-});
+  const login = new URL("/login", req.nextUrl.origin);
+  login.searchParams.set("callbackUrl", req.nextUrl.pathname);
+  return NextResponse.redirect(login);
+}
 
 export const config = {
-  matcher: ["/listings/new", "/listings/:id/edit", "/messages/:path*", "/me", "/admin", "/admin/:path*", "/auctions/new"],
+  matcher: [
+    "/listings/new",
+    "/listings/:id/edit",
+    "/messages/:path*",
+    "/me",
+    "/admin",
+    "/admin/:path*",
+    "/auctions/new",
+  ],
 };
