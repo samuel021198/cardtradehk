@@ -20,7 +20,7 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params;
   const listing = await prisma.listing.findUnique({ where: { id } });
   if (!listing || listing.sellerId !== session.user.id) {
-    return NextResponse.json({ error: "找不到呢個帖，或者你無權限" }, { status: 404 });
+    return NextResponse.json({ error: "找不到此商品，或你沒有權限" }, { status: 404 });
   }
 
   const body = await req.json().catch(() => null);
@@ -53,7 +53,7 @@ export async function PATCH(req: Request, { params }: Params) {
       return NextResponse.json({ error: "請選擇鑑定卡、Raw卡或未開封產品" }, { status: 400 });
     }
     if (!isValidListingCondition(cardType, condition)) {
-      return NextResponse.json({ error: "品相／鑑定唔對" }, { status: 400 });
+      return NextResponse.json({ error: "品相／鑑定不相符" }, { status: 400 });
     }
     data.cardType = cardType;
     data.condition = condition;

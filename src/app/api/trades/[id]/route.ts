@@ -20,10 +20,10 @@ export async function PATCH(req: Request, { params }: Params) {
     include: { listing: true, auction: true },
   });
   if (!trade || (trade.buyerId !== session.user.id && trade.sellerId !== session.user.id)) {
-    return NextResponse.json({ error: "搵唔到呢單交易" }, { status: 404 });
+    return NextResponse.json({ error: "找不到此交易" }, { status: 404 });
   }
   if (trade.status !== TRADE_STATUS.RESERVED) {
-    return NextResponse.json({ error: "呢單交易已經完結" }, { status: 400 });
+    return NextResponse.json({ error: "此交易已經完結" }, { status: 400 });
   }
 
   const body = await req.json().catch(() => null);
@@ -51,7 +51,7 @@ export async function PATCH(req: Request, { params }: Params) {
     const sellerCanMark = isSeller && !trade.winnerAckAt && deadlinePassed;
     const buyerGivesUp = isBuyer && !trade.sellerShippedAt;
     if (!sellerCanMark && !buyerGivesUp) {
-      return NextResponse.json({ error: "未到 48 小時，或者對方已確認，暫時唔可以當棄單" }, { status: 400 });
+      return NextResponse.json({ error: "未滿 48 小時，或對方已確認，暫時不可視為棄單" }, { status: 400 });
     }
     await prisma.trade.update({ where: { id }, data: { status: TRADE_STATUS.CANCELLED } });
     if (trade.listingId) {
@@ -101,7 +101,7 @@ export async function PATCH(req: Request, { params }: Params) {
     await notifyUser(trade.buyerId, {
       type: NOTIFICATION_TYPE.TRADE,
       title: "賣家已發貨，請確認收貨",
-      body: `「${title}」賣家已確認發貨。你收到貨之後，去「交易中」確認收貨。`,
+      body: `「${title}」賣家已確認發貨。收妥貨物後，請前往「交易中」確認收貨。`,
       href: "/trades",
       listingId: trade.listingId,
       shopId: trade.sellerId,
@@ -112,7 +112,7 @@ export async function PATCH(req: Request, { params }: Params) {
   if (action === "receive") {
     if (!isBuyer) return NextResponse.json({ error: "只有買家可以確認收貨" }, { status: 403 });
     if (!trade.sellerShippedAt) {
-      return NextResponse.json({ error: "賣家未確認發貨，暫時唔可以確認收貨" }, { status: 400 });
+      return NextResponse.json({ error: "賣家尚未確認發貨，暫時無法確認收貨" }, { status: 400 });
     }
     const updated = await prisma.trade.update({
       where: { id },

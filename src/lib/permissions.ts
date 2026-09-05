@@ -28,11 +28,11 @@ export function featureDenied(user: {
   canReview: boolean;
   canAuction?: boolean;
 }, feature: Feature) {
-  if (user.status === USER_STATUS.BLOCKED) return "呢個戶口已被封鎖";
-  if (feature === "post" && !user.canPost) return "你嘅戶口暫時唔可以放售";
-  if (feature === "chat" && !user.canChat) return "你嘅戶口暫時唔可以用站內傾偈";
-  if (feature === "review" && !user.canReview) return "你嘅戶口暫時唔可以評分";
-  if (feature === "auction" && !user.canAuction) return "呢個戶口未開通拍賣功能，請聯絡管理員。";
+  if (user.status === USER_STATUS.BLOCKED) return "此帳戶已被封鎖";
+  if (feature === "post" && !user.canPost) return "此帳戶暫時無法放售";
+  if (feature === "chat" && !user.canChat) return "此帳戶暫時無法使用站內訊息";
+  if (feature === "review" && !user.canReview) return "此帳戶暫時無法評分";
+  if (feature === "auction" && !user.canAuction) return "此帳戶尚未開通拍賣功能，請聯絡管理員。";
   return null;
 }
 

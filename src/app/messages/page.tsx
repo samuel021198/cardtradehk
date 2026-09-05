@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 function typeLabel(type: string) {
   if (type === "PRICE_DROP") return "減價";
+  if (type === "OUTBID") return "被超價";
   if (type === "SOLD") return "已出售";
   if (type === "NEW_LISTING") return "商店新貨";
   if (type === "NEW_AUCTION") return "商店拍賣";
@@ -86,7 +87,7 @@ export default async function MessagesPage({
     <div className="space-y-4">
       <div>
         <h1 className="text-3xl font-black tracking-tight">訊息</h1>
-        <p className="mt-2 text-[var(--muted)]">對話同系統通知都集中喺度。</p>
+        <p className="mt-2 text-[var(--muted)]">對話與系統通知集中於此。</p>
       </div>
       <div className="flex flex-wrap gap-2">
         <Link
@@ -105,7 +106,7 @@ export default async function MessagesPage({
 
       {!alerts && (
         conversations.length === 0 ? (
-          <p className="text-[var(--muted)]">未有對話。去帖文撳「站內傾偈」就會出現喺度。</p>
+          <p className="text-[var(--muted)]">尚未有對話。於商品頁選擇「站內訊息」後，對話會顯示於此。</p>
         ) : (
           <div className="space-y-2">
             {inboxRows.map((c) => {
@@ -160,7 +161,7 @@ export default async function MessagesPage({
             {unreadNotes > 0 && <MarkNotificationsRead />}
           </div>
           {notifications.length === 0 ? (
-            <p className="py-12 text-center text-[var(--muted)]">暫時未有通知。收藏帖或者關注商店之後就會收到動態。</p>
+            <p className="py-12 text-center text-[var(--muted)]">暫時未有通知。收藏商品或關注商店後即可接收動態。</p>
           ) : (
             <div className="space-y-2">
               {alertRows.map((n) => (

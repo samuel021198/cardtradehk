@@ -29,7 +29,7 @@ export function ContactWinnerButton({
         router.push(`/login?callbackUrl=/auctions/${auctionId}`);
         return;
       }
-      setError(json.error || "開唔到傾偈");
+      setError(json.error || "無法開啟對話");
       return;
     }
     router.push(`/messages/${json.id}`);
@@ -38,7 +38,7 @@ export function ContactWinnerButton({
   return (
     <div className="space-y-2">
       <button className="btn-primary w-full" type="button" onClick={openChat} disabled={loading}>
-        {loading ? "開緊對話…" : label}
+        {loading ? "開啟對話中…" : label}
       </button>
       {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
     </div>

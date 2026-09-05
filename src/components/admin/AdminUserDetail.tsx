@@ -71,7 +71,7 @@ export function AdminUserDetail({ user }: Props) {
   return (
     <form onSubmit={onSubmit} className="card mx-auto max-w-xl space-y-4 p-6">
       <Link className="text-sm font-bold text-[var(--accent)]" href="/admin">
-        ← 返用戶列表
+        ← 返回用戶列表
       </Link>
       <h2 className="text-2xl font-black">{user.displayName}</h2>
       <p className="text-sm text-[var(--muted)]">登入電話：{formatHkPhone(user.phone)}</p>
@@ -101,18 +101,18 @@ export function AdminUserDetail({ user }: Props) {
         <select className="field font-normal" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="ACTIVE">正常</option>
           <option value="RESTRICTED">限制（可登入，功能由下面開關決定）</option>
-          <option value="BLOCKED">封鎖（唔可以登入，帖文會喺市集隱藏）</option>
+          <option value="BLOCKED">封鎖（無法登入，商品會於市集隱藏）</option>
         </select>
       </label>
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold">功能開關</legend>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={canPost} onChange={(e) => setCanPost(e.target.checked)} />
-          可以放售／改帖
+          可以放售／編輯商品
         </label>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={canChat} onChange={(e) => setCanChat(e.target.checked)} />
-          可以用站內傾偈
+          可以使用站內訊息
         </label>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={canReview} onChange={(e) => setCanReview(e.target.checked)} />
@@ -128,7 +128,7 @@ export function AdminUserDetail({ user }: Props) {
         <textarea className="field min-h-24 font-normal" value={adminNote} onChange={(e) => setAdminNote(e.target.value)} />
       </label>
       <label className="block space-y-1 text-sm font-semibold">
-        重設密碼（留空即唔改）
+        重設密碼（留空則不更改）
         <input className="field font-normal" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} />
       </label>
       {error && <p className="text-sm font-semibold text-red-600">{error}</p>}

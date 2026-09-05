@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const file = form.get("file");
   if (!(file instanceof File)) return NextResponse.json({ error: "請選擇頭像" }, { status: 400 });
   if (!ALLOWED.has(file.type) || file.size > 3 * 1024 * 1024) {
-    return NextResponse.json({ error: "只接受 3MB 以內嘅 JPG／PNG／WEBP" }, { status: 400 });
+    return NextResponse.json({ error: "只接受 3MB 以內的 JPG／PNG／WEBP" }, { status: 400 });
   }
 
   const avatarUrl = await savePublicImage({

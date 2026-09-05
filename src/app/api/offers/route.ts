@@ -31,19 +31,19 @@ export async function POST(req: Request) {
   const note = String(body?.note ?? "").trim().slice(0, 200);
 
   const listing = await prisma.listing.findUnique({ where: { id: listingId } });
-  if (!listing) return NextResponse.json({ error: "搵唔到商品" }, { status: 404 });
-  if (listing.sellerId === session.user.id) return NextResponse.json({ error: "唔可以對自己出價" }, { status: 400 });
-  if (listing.status !== LISTING_STATUS.ACTIVE) return NextResponse.json({ error: "呢件商品而家唔接受出價" }, { status: 400 });
+  if (!listing) return NextResponse.json({ error: "找不到商品" }, { status: 404 });
+  if (listing.sellerId === session.user.id) return NextResponse.json({ error: "不可對自己出價" }, { status: 400 });
+  if (listing.status !== LISTING_STATUS.ACTIVE) return NextResponse.json({ error: "此商品目前不接受出價" }, { status: 400 });
   if (!Number.isInteger(amountHkd) || amountHkd < 1) return NextResponse.json({ error: "請輸入有效出價" }, { status: 400 });
 
   const existing = await prisma.offer.findUnique({
     where: { listingId_buyerId: { listingId, buyerId: session.user.id } },
   });
   if (existing?.status === OFFER_STATUS.ACCEPTED) {
-    return NextResponse.json({ error: "呢單出價已經成交" }, { status: 400 });
+    return NextResponse.json({ error: "此出價已經成交" }, { status: 400 });
   }
   if (existing?.status === OFFER_STATUS.PENDING) {
-    return NextResponse.json({ error: "你已經有一個待回覆出價，等賣家回覆或者取消之後再出" }, { status: 400 });
+    return NextResponse.json({ error: "你已有一個待回覆出價，請待賣家回覆或取消後再提出" }, { status: 400 });
   }
 
   const offer = existing

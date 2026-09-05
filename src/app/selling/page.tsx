@@ -87,7 +87,7 @@ export default async function SellingPage({
           <div>
             <p className="text-sm font-bold text-[var(--accent)]">賣家中心</p>
             <h1 className="mt-1 text-3xl font-black tracking-tight">我的商品</h1>
-            <p className="mt-2 text-[var(--muted)]">可以標記已出售，或者人手撳「已保留」鎖定買家。保留後去「交易中」確認交收。</p>
+            <p className="mt-2 text-[var(--muted)]">可標記已出售，或手動選擇「已保留」鎖定買家。保留後請前往「交易中」確認交收。</p>
           </div>
           <Link className="btn-primary" href="/listings/new">
             新放售
@@ -148,12 +148,12 @@ export default async function SellingPage({
       {listings.length === 0 ? (
         <p className="py-12 text-center text-[var(--muted)]">
           {status === "ACTIVE"
-            ? "而家冇放售中嘅帖。"
+            ? "目前沒有放售中的商品。"
             : status === "RESERVED"
-              ? "未有已保留商品。"
+              ? "尚未有已保留商品。"
               : status === "SOLD"
-                ? "未有標記已售嘅帖。"
-                : "未有隱藏帖。"}
+                ? "尚未有已售商品。"
+                : "尚未有隱藏商品。"}
         </p>
       ) : (
         <div className="space-y-10">

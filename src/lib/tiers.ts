@@ -18,7 +18,7 @@ export function tierLabel(value: string) {
 
 export const REPORT_REASONS = [
   { value: "SCAM", label: "懷疑詐騙／假貨" },
-  { value: "ABANDON", label: "棄單／唔交收" },
+  { value: "ABANDON", label: "棄單／未交收" },
   { value: "ABUSE", label: "騷擾或不當行為" },
   { value: "OTHER", label: "其他" },
 ] as const;

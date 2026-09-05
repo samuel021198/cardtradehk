@@ -77,7 +77,7 @@ export function ListingForm({ mode, listingId, initial }: ListingFormProps) {
     }
     const draft = currentDraft();
     if (draft.title.trim().length < 2 || !Number.isInteger(draft.priceHkd) || draft.priceHkd < 1) {
-      setError("請先填標題同價錢，再加入清單");
+      setError("請先填寫標題及價錢，再加入清單");
       return;
     }
     setQueue((prev) => [...prev, draft]);
@@ -115,7 +115,7 @@ export function ListingForm({ mode, listingId, initial }: ListingFormProps) {
       router.push(items.length === 1 ? `/listings/${data.id}` : "/selling");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "出咗錯");
+      setError(err instanceof Error ? err.message : "發生錯誤");
     } finally {
       setPending(false);
     }
@@ -123,9 +123,9 @@ export function ListingForm({ mode, listingId, initial }: ListingFormProps) {
 
   return (
     <form onSubmit={onSubmit} className="card mx-auto max-w-2xl space-y-4 p-6">
-      <h1 className="text-2xl font-black">{mode === "create" ? "放售卡牌" : "編輯帖文"}</h1>
+      <h1 className="text-2xl font-black">{mode === "create" ? "放售卡牌" : "編輯商品"}</h1>
       {mode === "create" && (
-        <p className="text-sm text-[var(--muted)]">可以一次過加入最多 {MAX_BATCH_POST} 件，填完一件撳「加入清單」再繼續填下一件。</p>
+        <p className="text-sm text-[var(--muted)]">可一次加入最多 {MAX_BATCH_POST} 件。填妥一件後點選「加入清單」，再繼續下一件。</p>
       )}
       <label className="block space-y-1 text-sm font-semibold">
         標題
@@ -207,7 +207,7 @@ export function ListingForm({ mode, listingId, initial }: ListingFormProps) {
           />
         </label>
         <p className="text-xs text-[var(--muted)]">
-          已選 {images.length}/{MAX_LISTING_IMAGES} 張。撳縮圖可以移除。
+          已選 {images.length}/{MAX_LISTING_IMAGES} 張。點選縮圖即可移除。
         </p>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
           {images.map((src) => (
@@ -216,7 +216,7 @@ export function ListingForm({ mode, listingId, initial }: ListingFormProps) {
               type="button"
               className="overflow-hidden rounded-xl border border-[var(--line)]"
               onClick={() => setImages((prev) => prev.filter((x) => x !== src))}
-              title="撳一下移除"
+              title="點選移除"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt="" className="aspect-square w-full object-cover" />
@@ -242,11 +242,11 @@ export function ListingForm({ mode, listingId, initial }: ListingFormProps) {
       <div className="flex flex-wrap gap-2">
         {mode === "create" && (
           <button className="btn-secondary" type="button" disabled={pending} onClick={addToQueue}>
-            加入清單（再 post 下一件）
+            加入清單（繼續下一件）
           </button>
         )}
         <button className="btn-primary" disabled={pending} type="submit">
-          {pending ? "儲存緊…" : mode === "create" && queue.length > 0 ? `一次過發佈 ${queue.length + (title.trim() ? 1 : 0)} 件` : "發佈"}
+          {pending ? "儲存中…" : mode === "create" && queue.length > 0 ? `一次發佈 ${queue.length + (title.trim() ? 1 : 0)} 件` : "發佈"}
         </button>
       </div>
     </form>

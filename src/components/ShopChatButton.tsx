@@ -25,7 +25,7 @@ export function ShopChatButton({ shopId }: { shopId: string }) {
   }
 
   return (
-    <button type="button" className="grid h-10 w-10 place-items-center rounded-full border border-[var(--line)]" onClick={open} disabled={busy} title="聊天">
+    <button type="button" className="grid h-10 w-10 place-items-center rounded-full border border-[var(--line)]" onClick={open} disabled={busy} title="傳送訊息">
       {busy ? "…" : "💬"}
     </button>
   );

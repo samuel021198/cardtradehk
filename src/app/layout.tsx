@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "CardTradeHK — 香港卡牌放售平台",
-  description: "Carousell 式卡牌交易：放帖、傾偈、WhatsApp，線下交收後互評。平台不經手付款。",
+  description: "香港卡牌市集：放售、站內訊息、WhatsApp 聯絡，線下交收後互評。平台不經手付款。",
   appleWebApp: {
     capable: true,
     title: "CardTradeHK",

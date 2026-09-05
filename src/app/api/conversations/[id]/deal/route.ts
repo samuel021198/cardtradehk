@@ -22,8 +22,8 @@ export async function POST(_req: Request, { params }: Params) {
     orderBy: { createdAt: "desc" },
   });
   if (!trade) {
-    return NextResponse.json({ error: "請去「交易中」跟進發貨同收貨" }, { status: 400 });
+    return NextResponse.json({ error: "請前往「交易中」跟進發貨與收貨" }, { status: 400 });
   }
 
-  return NextResponse.json({ error: "請去「交易中」：賣家確認發貨後，買家先可以確認收貨。" }, { status: 400 });
+  return NextResponse.json({ error: "請前往「交易中」：賣家確認發貨後，買家方可確認收貨。" }, { status: 400 });
 }

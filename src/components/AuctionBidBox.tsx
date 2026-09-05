@@ -35,18 +35,18 @@ export function AuctionBidBox({
       if (!res.ok) throw new Error(data.error || "出價失敗");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "出咗錯");
+      setError(err instanceof Error ? err.message : "發生錯誤");
     } finally {
       setPending(false);
     }
   }
 
-  if (!live) return <p className="text-sm font-semibold">呢場拍賣已結束。得標者請用聊天／WhatsApp 同賣家交收。</p>;
+  if (!live) return <p className="text-sm font-semibold">此拍賣已結束。得標者請以訊息或 WhatsApp 與賣家交收。</p>;
 
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <label className="block space-y-1 text-sm font-semibold">
-        你嘅出價（至少 HK${minNext}）
+        你的出價（至少 HK${minNext}）
         <input className="field font-normal" type="number" min={minNext} value={amount} onChange={(e) => setAmount(e.target.value)} required />
       </label>
       <p className="text-xs text-[var(--muted)]">
@@ -54,7 +54,7 @@ export function AuctionBidBox({
       </p>
       {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
       <button className="btn-primary w-full" disabled={pending} type="submit">
-        {pending ? "提交緊…" : "出價"}
+        {pending ? "提交中…" : "出價"}
       </button>
     </form>
   );

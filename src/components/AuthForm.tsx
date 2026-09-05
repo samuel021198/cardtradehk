@@ -38,7 +38,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       router.push(params.get("callbackUrl") || "/");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "出咗錯");
+      setError(err instanceof Error ? err.message : "發生錯誤");
     } finally {
       setPending(false);
     }
@@ -49,7 +49,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       <div>
         <h1 className="text-2xl font-black">{mode === "login" ? "登入" : "開戶"}</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          {mode === "login" ? "可用帳戶名稱（例如 try01）或香港電話 + 密碼。" : "用香港手機號碼 + 密碼開戶。本機唔使驗證 SMS。"}
+          {mode === "login" ? "可使用帳戶名稱（例如 try01）或香港電話及密碼登入。" : "請以香港手機號碼及密碼開戶。本機開發無須驗證短訊。"}
         </p>
       </div>
       {mode === "register" && (
@@ -82,19 +82,19 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       </label>
       {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
       <button className="btn-primary w-full" disabled={pending} type="submit">
-        {pending ? "處理緊…" : mode === "login" ? "登入" : "開戶並登入"}
+        {pending ? "處理中…" : mode === "login" ? "登入" : "開戶並登入"}
       </button>
       <p className="text-center text-sm text-[var(--muted)]">
         {mode === "login" ? (
           <>
-            未有戶口？{" "}
+            尚未有帳戶？{" "}
             <Link className="font-bold text-[var(--accent)]" href="/register">
               開戶
             </Link>
           </>
         ) : (
           <>
-            已經有戶口？{" "}
+            已經有帳戶？{" "}
             <Link className="font-bold text-[var(--accent)]" href="/login">
               登入
             </Link>

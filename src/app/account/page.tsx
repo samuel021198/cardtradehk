@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 const LINKS = [
   { href: "/trades", label: "交易中", hint: "發貨、收貨、互評" },
-  { href: "/favorites", label: "我的收藏", hint: "收藏咗嘅放售同拍賣" },
-  { href: "/selling", label: "我的商品", hint: "管理放售中嘅帖" },
-  { href: "/listings/new", label: "放售商品", hint: "開新帖" },
+  { href: "/favorites", label: "我的收藏", hint: "已收藏的放售與拍賣" },
+  { href: "/selling", label: "我的商品", hint: "管理放售中的商品" },
+  { href: "/listings/new", label: "放售商品", hint: "發佈新商品" },
   { href: "/auctions/new", label: "開拍", hint: "開新拍賣" },
   { href: "/me", label: "個人設定", hint: "頭像、WhatsApp、交收備註" },
 ] as const;
@@ -32,7 +32,7 @@ export default async function AccountPage() {
         <UserAvatar name={me.displayName} src={me.avatarUrl} />
         <div className="min-w-0 flex-1">
           <div className="text-xl font-black">{me.displayName}</div>
-          <p className="truncate text-sm text-[var(--muted)]">{me.bio || "睇我的帳戶同評價"}</p>
+          <p className="truncate text-sm text-[var(--muted)]">{me.bio || "查看帳戶資料與評價"}</p>
         </div>
         <span className="text-sm font-bold text-[var(--accent)]">檔案</span>
       </Link>

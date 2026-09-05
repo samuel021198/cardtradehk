@@ -66,11 +66,11 @@ export function ReserveListingButton({
       {open && (
         <div className="space-y-2 rounded-2xl border border-[var(--line)] bg-[var(--chip)] p-3">
           {buyers.length === 0 ? (
-            <p className="text-xs text-[var(--muted)]">未有傾過偈或者出過價嘅買家。請先喺聊天確認對方，或者等買家出價後接受。</p>
+            <p className="text-xs text-[var(--muted)]">尚未有曾對話或出價的買家。請先於對話確認對方，或待買家出價後接受。</p>
           ) : (
             <>
               <label className="block space-y-1 text-xs font-semibold">
-                保留俾邊個
+                保留予哪位買家
                 <select
                   className="field text-sm font-normal"
                   value={buyerId}
@@ -95,7 +95,7 @@ export function ReserveListingButton({
                 <input className="field text-sm font-normal" type="number" min={1} value={amount} onChange={(e) => setAmount(e.target.value)} />
               </label>
               <button className="btn-primary w-full" type="button" disabled={busy} onClick={submit}>
-                {busy ? "保留緊…" : "確認已保留"}
+                {busy ? "保留中…" : "確認已保留"}
               </button>
             </>
           )}

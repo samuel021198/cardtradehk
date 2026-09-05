@@ -49,7 +49,7 @@ export async function settleEndedAuction(auctionId: string) {
       {
         conversationId: conversation.id,
         senderId: auction.sellerId,
-        body: `恭喜你以$${winner.amountHkd}拍得「${auction.title}」。請喺 48 小時內去「交易中」確認得標。棄單會記低，兩次或以上會限制再出價。`,
+        body: `恭喜你以$${winner.amountHkd}拍得「${auction.title}」。請於 48 小時內前往「交易中」確認得標。棄單會被記錄，兩次或以上將限制再次出價。`,
       },
       {
         conversationId: conversation.id,
@@ -61,7 +61,7 @@ export async function settleEndedAuction(auctionId: string) {
 
   await notifyUser(winner.bidderId, {
     type: NOTIFICATION_TYPE.TRADE,
-    title: "你拍到喇",
+    title: "你已得標",
     body: `「${auction.title}」以 HK$${winner.amountHkd} 得標，請 48 小時內確認。`,
     href: "/trades",
     shopId: auction.sellerId,

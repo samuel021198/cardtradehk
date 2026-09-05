@@ -3,6 +3,7 @@ import { listingMeta } from "@/lib/constants";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { AuctionCountdown } from "@/components/AuctionCountdown";
 import { CoverImage } from "@/components/CoverImage";
+import { trustLine, type SellerTrust } from "@/lib/seller-trust";
 
 type ListingCardProps = {
   id: string;
@@ -14,6 +15,7 @@ type ListingCardProps = {
   images: string[];
   status?: string;
   sellerName?: string;
+  sellerTrust?: SellerTrust | null;
   href?: string;
   priceLabel?: string;
   badge?: string;
@@ -34,6 +36,7 @@ export function ListingCard({
   images,
   status,
   sellerName,
+  sellerTrust,
   href,
   priceLabel,
   badge,
@@ -62,10 +65,13 @@ export function ListingCard({
       <div className="space-y-1 p-3">
         <div className="text-base font-black text-[var(--accent)] md:text-lg">{priceLabel ?? `HK$${priceHkd}`}</div>
         <div className="line-clamp-2 text-sm font-semibold">{title}</div>
-        <div className="text-xs text-[var(--muted)]">
-          {listingMeta(game, cardType, condition)}
-          {sellerName ? ` · ${sellerName}` : ""}
-        </div>
+        <div className="text-xs text-[var(--muted)]">{listingMeta(game, cardType, condition)}</div>
+        {(sellerName || sellerTrust) && (
+          <div className="text-xs text-[var(--muted)]">
+            {sellerName}
+            {sellerTrust ? `${sellerName ? " · " : ""}${trustLine(sellerTrust)}` : ""}
+          </div>
+        )}
       </div>
     </Link>
     {showFavorite && (

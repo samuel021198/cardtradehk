@@ -20,7 +20,7 @@ export function MarkNotificationsRead() {
 
   return (
     <button className="btn-secondary" type="button" onClick={markAll} disabled={busy}>
-      {busy ? "處理緊…" : "全部標為已讀"}
+      {busy ? "處理中…" : "全部標為已讀"}
     </button>
   );
 }

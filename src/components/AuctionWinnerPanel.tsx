@@ -61,22 +61,22 @@ export function AuctionWinnerPanel({
         </div>
       </Link>
       {abandoned ? (
-        <p className="text-sm font-semibold text-red-500">呢單已當棄單。你可以聯絡次高出價者。</p>
+        <p className="text-sm font-semibold text-red-500">此交易已視為棄單。你可以聯絡次高出價者。</p>
       ) : winnerAcked ? (
         <p className="text-sm font-semibold text-emerald-500">得標者已確認會跟進交收。</p>
       ) : (
         <p className="text-sm text-[var(--muted)]">
-          {overdue ? "已過 48 小時未確認。" : "等得標者 48 小時內去「交易中」確認。"}
+          {overdue ? "已超過 48 小時尚未確認。" : "請得標者於 48 小時內前往「交易中」確認。"}
           {deadline ? ` 限期 ${deadline.toLocaleString("zh-HK")}` : ""}
         </p>
       )}
       <div className="grid gap-2">
         <button className="btn-primary w-full" type="button" disabled={Boolean(busy)} onClick={() => openChat()}>
-          {busy === "winner" ? "開緊…" : isSeller ? "聊天聯絡得標者" : "聊天聯絡賣家"}
+          {busy === "winner" ? "開啟中…" : isSeller ? "聊天聯絡得標者" : "聊天聯絡賣家"}
         </button>
         {tradeHref && (
           <Link className="btn-secondary w-full text-center" href={tradeHref}>
-            去交易中跟進
+            前往交易中跟進
           </Link>
         )}
         {isSeller && winner.whatsapp && (
@@ -93,9 +93,9 @@ export function AuctionWinnerPanel({
       {isSeller && runnerUp && (
         <div className="border-t border-[var(--line)] pt-3">
           <div className="text-sm font-bold">次高出價 · {runnerUp.displayName}</div>
-          <p className="mb-2 text-xs text-[var(--muted)]">得標者棄單可以改聯絡呢位。</p>
+          <p className="mb-2 text-xs text-[var(--muted)]">得標者棄單後，可改為聯絡此會員。</p>
           <button className="btn-secondary w-full" type="button" disabled={Boolean(busy)} onClick={() => openChat(runnerUp.id)}>
-            {busy === runnerUp.id ? "開緊…" : "聯絡次高出價者"}
+            {busy === runnerUp.id ? "開啟中…" : "聯絡次高出價者"}
           </button>
         </div>
       )}

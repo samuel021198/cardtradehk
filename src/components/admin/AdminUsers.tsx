@@ -78,7 +78,7 @@ export function AdminUsers({ users }: { users: AdminUser[] }) {
   }
 
   async function removeUser(id: string, name: string) {
-    if (!confirm(`確定刪除「${name}」？帖文同對話都會一齊刪。`)) return;
+    if (!confirm(`確定刪除「${name}」？商品與對話將一併刪除。`)) return;
     const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) {
@@ -107,7 +107,7 @@ export function AdminUsers({ users }: { users: AdminUser[] }) {
       <div className="card overflow-x-auto p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-black">用戶列表（{filtered.length}）</h2>
-          <input className="field max-w-xs" placeholder="搜名稱或電話" value={q} onChange={(e) => setQ(e.target.value)} />
+          <input className="field max-w-xs" placeholder="搜尋名稱或電話" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
         {error && <p className="mb-3 text-sm font-semibold text-red-600">{error}</p>}
         <table className="w-full min-w-[720px] text-left text-sm">
@@ -127,7 +127,7 @@ export function AdminUsers({ users }: { users: AdminUser[] }) {
                     {u.displayName}
                   </Link>
                   <div className="text-xs text-[var(--muted)]">
-                    {formatHkPhone(u.phone)} · {u.role === "ADMIN" ? "管理員" : "用戶"} · {tierLabel(u.membershipTier)} · {u._count.listings} 帖
+                    {formatHkPhone(u.phone)} · {u.role === "ADMIN" ? "管理員" : "用戶"} · {tierLabel(u.membershipTier)} · {u._count.listings} 件商品
                   </div>
                   {u.adminNote && <div className="text-xs">備註：{u.adminNote}</div>}
                 </td>
@@ -151,7 +151,7 @@ export function AdminUsers({ users }: { users: AdminUser[] }) {
                       放售
                     </button>
                     <button type="button" className={`chip ${u.canChat ? "chip-on" : ""}`} onClick={() => patch(u.id, { canChat: !u.canChat })}>
-                      傾偈
+                      訊息
                     </button>
                     <button type="button" className={`chip ${u.canReview ? "chip-on" : ""}`} onClick={() => patch(u.id, { canReview: !u.canReview })}>
                       評分

@@ -11,7 +11,7 @@ export async function GET(_req: Request, { params }: Params) {
   const { id } = await params;
   const listing = await prisma.listing.findUnique({ where: { id } });
   if (!listing || listing.sellerId !== session.user.id) {
-    return NextResponse.json({ error: "搵唔到呢個帖" }, { status: 404 });
+    return NextResponse.json({ error: "找不到此商品" }, { status: 404 });
   }
 
   const [conversations, offers] = await Promise.all([

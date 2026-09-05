@@ -4,7 +4,7 @@ import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { cloudinaryReady, savePublicImage } from "../src/lib/storage";
-import { DEMO_PRODUCTS } from "./demo-catalog";
+import { auctionSeed, DEMO_AUCTIONS, DEMO_PRODUCTS } from "./demo-catalog";
 
 const ROOT = process.cwd();
 loadEnv({ path: path.join(ROOT, ".env"), override: true });
@@ -297,6 +297,14 @@ async function main() {
       });
       createdListings.push(listing);
     }
+  }
+
+  const seller = testers[0] ?? admin;
+  for (const [index, item] of DEMO_AUCTIONS.entries()) {
+    const auction = await prisma.auction.create({
+      data: auctionSeed(item, seller.id, index),
+    });
+    createdAuctions.push(auction);
   }
 
   const active = createdListings.filter((l) => l.status === "ACTIVE");

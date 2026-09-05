@@ -95,7 +95,7 @@ export function ChatRoom({ conversationId, meId }: { conversationId: string; meI
           </Link>
           <div className="mt-1 flex items-center gap-2 text-sm text-[var(--muted)]">
             <UserAvatar name={other.displayName} src={other.avatarUrl} size="sm" />
-            同 {other.displayName} 傾緊
+            與 {other.displayName} 的對話
           </div>
         </div>
         <div className="flex-1 space-y-3 overflow-y-auto p-4">
@@ -141,12 +141,12 @@ export function ChatRoom({ conversationId, meId }: { conversationId: string; meI
           <div className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">交易</div>
           {!trade && (
             <p className="text-sm text-[var(--muted)]">
-              未開保留單。賣家保留或者雙方同意出價之後，會喺「交易中」跟進發貨同收貨。
+              尚未建立保留單。賣家確認保留或雙方達成出價後，可於「交易中」跟進發貨與收貨。
             </p>
           )}
           {trade && trade.status !== "COMPLETED" && (
             <>
-              <p className="text-sm text-[var(--muted)]">賣家先確認發貨，你收到之後買家先確認收貨。</p>
+              <p className="text-sm text-[var(--muted)]">賣家須先確認發貨，買家收妥後再確認收貨。</p>
               <TradeActions
                 tradeId={trade.id}
                 isSeller={!isBuyer}
@@ -161,11 +161,11 @@ export function ChatRoom({ conversationId, meId }: { conversationId: string; meI
           )}
           {completed && <p className="text-sm font-bold text-emerald-500">交易已完成</p>}
           <Link className="inline-block text-sm underline" href="/trades">
-            去交易中
+            前往交易中
           </Link>
         </div>
         {completed && trade && !iReviewed && <ReviewForm tradeId={trade.id} otherName={other.displayName} compact />}
-        {completed && iReviewed && <p className="text-sm font-semibold">你已經評過呢單。</p>}
+        {completed && iReviewed && <p className="text-sm font-semibold">你已為此交易評分。</p>}
         {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
       </aside>
     </div>

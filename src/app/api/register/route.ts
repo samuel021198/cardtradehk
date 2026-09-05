@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const phone = normalizeHkPhone(String(body?.phone ?? ""));
 
   if (!phone) {
-    return NextResponse.json({ error: "請輸入有效嘅香港手機號碼（8位）" }, { status: 400 });
+    return NextResponse.json({ error: "請輸入有效的香港手機號碼（8位）" }, { status: 400 });
   }
   if (displayName.length < 2) {
     return NextResponse.json({ error: "顯示名稱至少兩個字" }, { status: 400 });
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
   const exists = await prisma.user.findUnique({ where: { phone } });
   if (exists) {
-    return NextResponse.json({ error: "呢個電話已經註冊" }, { status: 409 });
+    return NextResponse.json({ error: "此電話已經註冊" }, { status: 409 });
   }
 
   const user = await prisma.user.create({

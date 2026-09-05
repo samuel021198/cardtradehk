@@ -195,3 +195,115 @@ export const DEMO_POKEMON: DemoItem[] = [
 ];
 
 export const DEMO_PRODUCTS = [...DEMO_ONE_PIECE, ...DEMO_POKEMON];
+
+export const DEMO_AUCTIONS: DemoItem[] = [
+  {
+    title: "Nico Robin OP05-051 Super Rare",
+    game: "ONE_PIECE",
+    cardType: "RAW",
+    condition: "A",
+    priceHkd: 110,
+    description: "Robin SR，拍賣起價低，旺角交收。",
+    imageUrl: "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/one-piece/OP05/OP05-051_EN.webp",
+  },
+  {
+    title: "Crocodile OP08-062",
+    game: "ONE_PIECE",
+    cardType: "RAW",
+    condition: "B",
+    priceHkd: 85,
+    description: "Crocodile，角位微白。",
+    imageUrl: "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/one-piece/OP08/OP08-062_EN.webp",
+  },
+  {
+    title: "One Piece OP-05 Booster Box (JP)",
+    game: "ONE_PIECE",
+    cardType: "SEALED",
+    condition: "BOX",
+    priceHkd: 1280,
+    description: "日版新時代的主角原盒，膠膜完整。",
+    imageUrl: "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/one-piece/OP05/OP05-119_EN.webp",
+  },
+  {
+    title: "Monkey D. Luffy OP05-119 SEC (JP)",
+    game: "ONE_PIECE",
+    cardType: "RAW",
+    condition: "A",
+    priceHkd: 180,
+    description: "日版 Gear 5 SEC Raw。",
+    imageUrl: "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/one-piece/OP05/OP05-119_EN.webp",
+  },
+  {
+    title: "One Piece OP-09 Booster Box (EN)",
+    game: "ONE_PIECE",
+    cardType: "SEALED",
+    condition: "BOX",
+    priceHkd: 980,
+    description: "英文 Emperors in the New World 原盒。",
+    imageUrl: "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/one-piece/OP01/OP01-120_EN.webp",
+  },
+  {
+    title: "Venusaur Base Set #15",
+    game: "POKEMON",
+    cardType: "RAW",
+    condition: "B",
+    priceHkd: 980,
+    description: "Base Set Venusaur，輕微套痕。",
+    imageUrl: "https://images.pokemontcg.io/base1/15_hires.png",
+  },
+  {
+    title: "Blastoise Base Set #2",
+    game: "POKEMON",
+    cardType: "RAW",
+    condition: "A",
+    priceHkd: 1680,
+    description: "Base Set Blastoise，角位靚。",
+    imageUrl: "https://images.pokemontcg.io/base1/2_hires.png",
+  },
+  {
+    title: "Charizard V Darkness Ablaze #19",
+    game: "POKEMON",
+    cardType: "RAW",
+    condition: "A",
+    priceHkd: 420,
+    description: "Darkness Ablaze Charizard V。",
+    imageUrl: "https://images.pokemontcg.io/swsh3/19_hires.png",
+  },
+  {
+    title: "Pikachu V Vivid Voltage #43",
+    game: "POKEMON",
+    cardType: "RAW",
+    condition: "A",
+    priceHkd: 160,
+    description: "Vivid Voltage Pikachu V。",
+    imageUrl: "https://images.pokemontcg.io/swsh4/43_hires.png",
+  },
+  {
+    title: "Gyarados Base Set #6",
+    game: "POKEMON",
+    cardType: "GRADED",
+    condition: "PSA9",
+    priceHkd: 2200,
+    description: "Base Set Gyarados PSA9。",
+    imageUrl: "https://images.pokemontcg.io/base1/6_hires.png",
+  },
+];
+
+export function auctionSeed(item: DemoItem, sellerId: string, index: number) {
+  const hours = [20, 28, 36, 48, 60, 72, 96, 120, 144, 168][index % 10];
+  const startsAt = new Date(Date.now() - (index % 4) * 3600_000);
+  return {
+    title: item.title,
+    game: item.game,
+    cardType: item.cardType,
+    condition: item.condition,
+    description: item.description,
+    images: JSON.stringify([item.imageUrl]),
+    startingBidHkd: Math.max(20, Math.round(item.priceHkd * 0.45)),
+    minIncrementHkd: item.priceHkd > 800 ? 50 : 10,
+    startsAt,
+    endsAt: new Date(startsAt.getTime() + hours * 3600_000),
+    status: "LIVE",
+    sellerId,
+  };
+}

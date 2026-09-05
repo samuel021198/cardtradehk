@@ -16,7 +16,7 @@ export async function GET(_req: Request, { params }: Params) {
       },
     },
   });
-  if (!auction) return NextResponse.json({ error: "搵唔到呢場拍賣" }, { status: 404 });
+  if (!auction) return NextResponse.json({ error: "找不到此拍賣" }, { status: 404 });
 
   const top = auction.bids[0];
   const live = auction.status === "LIVE" && auction.endsAt.getTime() > Date.now();

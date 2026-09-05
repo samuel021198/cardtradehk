@@ -33,13 +33,13 @@ export async function POST(req: Request) {
       include: { reviews: { select: { fromUserId: true } } },
     });
     if (!trade || (trade.buyerId !== session.user.id && trade.sellerId !== session.user.id)) {
-      return NextResponse.json({ error: "你唔係呢單交易嘅當事人" }, { status: 403 });
+      return NextResponse.json({ error: "你不是此交易的當事人" }, { status: 403 });
     }
     if (trade.status !== TRADE_STATUS.COMPLETED) {
-      return NextResponse.json({ error: "買家確認收貨之後先可以評分" }, { status: 400 });
+      return NextResponse.json({ error: "買家確認收貨後方可評分" }, { status: 400 });
     }
     if (trade.reviews.some((r) => r.fromUserId === session.user.id)) {
-      return NextResponse.json({ error: "你已經評過呢單" }, { status: 409 });
+      return NextResponse.json({ error: "你已為此交易評分" }, { status: 409 });
     }
     const toUserId = session.user.id === trade.buyerId ? trade.sellerId : trade.buyerId;
     const review = await prisma.review.create({
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   }
 
   if (!dealId) {
-    return NextResponse.json({ error: "搵唔到要評嘅交易" }, { status: 400 });
+    return NextResponse.json({ error: "找不到要評分的交易" }, { status: 400 });
   }
 
   const deal = await prisma.deal.findUnique({
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
   const { buyerId, sellerId } = deal.conversation;
   if (session.user.id !== buyerId && session.user.id !== sellerId) {
-    return NextResponse.json({ error: "你唔係呢單交易嘅當事人" }, { status: 403 });
+    return NextResponse.json({ error: "你不是此交易的當事人" }, { status: 403 });
   }
 
   const toUserId = session.user.id === buyerId ? sellerId : buyerId;
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
     where: { dealId_fromUserId: { dealId, fromUserId: session.user.id } },
   });
   if (existing) {
-    return NextResponse.json({ error: "你已經評過呢單" }, { status: 409 });
+    return NextResponse.json({ error: "你已為此交易評分" }, { status: 409 });
   }
 
   const review = await prisma.review.create({

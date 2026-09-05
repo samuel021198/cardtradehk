@@ -59,7 +59,7 @@ export function TradeActions({
 
       {auction && isBuyer && !winnerAcked && (
         <button className="btn-primary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("ack")}>
-          {busy === "ack" ? "確認緊…" : "確認得標，會跟進交收"}
+          {busy === "ack" ? "確認中…" : "確認得標，並跟進交收"}
         </button>
       )}
       {auction && winnerAcked && <p className="text-sm font-semibold text-emerald-500">得標者已確認</p>}
@@ -69,7 +69,7 @@ export function TradeActions({
 
       {isSeller && !sellerShipped && (
         <button className="btn-primary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("ship")}>
-          {busy === "ship" ? "更新緊…" : "確認已發貨／已交收"}
+          {busy === "ship" ? "更新中…" : "確認已發貨／已交收"}
         </button>
       )}
       {isSeller && sellerShipped && !buyerReceived && (
@@ -77,23 +77,23 @@ export function TradeActions({
       )}
 
       {isBuyer && !sellerShipped && (
-        <p className="text-sm text-[var(--muted)]">等賣家確認發貨之後，你先可以確認收貨。</p>
+        <p className="text-sm text-[var(--muted)]">賣家確認發貨後，方可確認收貨。</p>
       )}
       {isBuyer && sellerShipped && !buyerReceived && (
         <button className="btn-primary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("receive")}>
-          {busy === "receive" ? "更新緊…" : "確認已收貨，完成交易"}
+          {busy === "receive" ? "更新中…" : "確認已收貨，完成交易"}
         </button>
       )}
       {isBuyer && buyerReceived && <p className="text-sm font-semibold text-emerald-500">你已確認收貨</p>}
 
       {auction && ((isBuyer && !sellerShipped) || (isSeller && overdue && !winnerAcked)) && (
         <button className="btn-secondary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("abandon")}>
-          {busy === "abandon" ? "處理緊…" : isSeller ? "標記得標者棄單" : "我要棄單"}
+          {busy === "abandon" ? "處理中…" : isSeller ? "標記得標者棄單" : "放棄此交易"}
         </button>
       )}
       {isSeller && !auction && !sellerShipped && (
         <button className="btn-secondary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("cancel")}>
-          {busy === "cancel" ? "取消緊…" : "取消保留，重新放售"}
+          {busy === "cancel" ? "取消中…" : "取消保留，重新放售"}
         </button>
       )}
       {error && <p className="text-sm font-semibold text-red-600">{error}</p>}

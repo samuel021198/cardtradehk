@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { LISTING_STATUS } from "@/lib/constants";
 import { USER_STATUS } from "@/lib/permissions";
 import { ListingCard } from "@/components/ListingCard";
+import { sellerTrustMap } from "@/lib/seller-trust";
 
 const select = {
   id: true,
@@ -93,17 +94,18 @@ export async function MoreLikeThis({
       : [];
   const rows = [...combined, ...fillers];
   if (rows.length === 0) return null;
+  const trust = await sellerTrustMap(rows.map((item) => item.sellerId));
 
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
         <div>
           <p className="text-sm font-bold text-[var(--accent)]">更多推介</p>
-          <h2 className="text-xl font-black tracking-tight md:text-2xl">你可能喜歡</h2>
-          <p className="mt-1 text-sm text-[var(--muted)]">{sellerName} 嘅其他商品</p>
+          <h2 className="text-xl font-black tracking-tight md:text-2xl">相關推薦</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">{sellerName} 的其他商品</p>
         </div>
         <Link href={`/users/${sellerId}`} className="shrink-0 text-sm font-bold text-[var(--accent)]">
-          睇晒成間店
+          瀏覽整間商店
         </Link>
       </div>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
@@ -118,6 +120,7 @@ export async function MoreLikeThis({
             priceHkd={item.priceHkd}
             images={parseImages(item.images)}
             sellerName={item.seller.displayName}
+            sellerTrust={trust.get(item.sellerId)}
             showFavorite={viewerId !== item.sellerId}
             favorited={favoritedIds.has(item.id)}
           />

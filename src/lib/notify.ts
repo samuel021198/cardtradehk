@@ -9,6 +9,7 @@ export const NOTIFICATION_TYPE = {
   OFFER: "OFFER",
   TRADE: "TRADE",
   REPORT: "REPORT",
+  OUTBID: "OUTBID",
 } as const;
 
 async function notifyUsers(
@@ -96,6 +97,7 @@ export async function notifyUser(
     body: string;
     href: string;
     listingId?: string | null;
+    auctionId?: string | null;
     shopId?: string | null;
   },
 ) {
@@ -103,12 +105,31 @@ export async function notifyUser(
   await notifyUsers([userId], data);
 }
 
+export async function notifyOutbid(opts: {
+  previousBidderId: string;
+  newBidderId: string;
+  auctionId: string;
+  title: string;
+  amountHkd: number;
+  sellerId: string;
+}) {
+  if (!opts.previousBidderId || opts.previousBidderId === opts.newBidderId) return;
+  await notifyUser(opts.previousBidderId, {
+    type: NOTIFICATION_TYPE.OUTBID,
+    title: "出價已被超過",
+    body: `「${opts.title}」目前最高價為 HK$${opts.amountHkd}`,
+    href: `/auctions/${opts.auctionId}`,
+    auctionId: opts.auctionId,
+    shopId: opts.sellerId,
+  });
+}
+
 export async function notifyListingReserved(listing: { id: string; title: string; sellerId: string }, exceptUserId?: string) {
   const userIds = (await listingWatcherIds(listing.id, listing.sellerId)).filter((id) => id !== exceptUserId);
   await notifyUsers(userIds, {
     type: NOTIFICATION_TYPE.RESERVED,
     title: "收藏商品已保留",
-    body: `「${listing.title}」已保留俾其他買家，暫時唔再接受新出價。`,
+    body: `「${listing.title}」已保留予其他買家，暫時不再接受新出價。`,
     href: `/listings/${listing.id}`,
     listingId: listing.id,
     shopId: listing.sellerId,
@@ -136,7 +157,7 @@ export async function notifyShopNewAuction(auction: { id: string; title: string;
   const userIds = await shopFollowerIds(auction.sellerId);
   await notifyUsers(userIds, {
     type: NOTIFICATION_TYPE.NEW_AUCTION,
-    title: `${shopName} 開咗新拍賣`,
+    title: `${shopName} 開立了新拍賣`,
     body: `「${auction.title}」起拍 HK$${auction.startingBidHkd}`,
     href: `/auctions/${auction.id}`,
     auctionId: auction.id,

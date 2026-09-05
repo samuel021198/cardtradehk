@@ -25,7 +25,7 @@ export function TradeSearch() {
     <form onSubmit={onSubmit} className="flex gap-2">
       <input
         className="field flex-1"
-        placeholder="搜商品名稱、對方名稱…"
+        placeholder="搜尋商品名稱、對方名稱…"
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />

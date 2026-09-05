@@ -81,7 +81,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           {!isOwner && <FavoriteButton listingId={listing.id} initialFavorited={watch.listingIds.has(listing.id)} />}
         </div>
         <div className="text-3xl font-black text-[var(--accent)]">HK${listing.priceHkd}</div>
-        <p className="whitespace-pre-wrap text-[var(--muted)]">{listing.description || "賣家未寫詳情。"}</p>
+        <p className="whitespace-pre-wrap text-[var(--muted)]">{listing.description || "賣家尚未填寫詳情。"}</p>
         <div className="space-y-2 rounded-2xl bg-[var(--chip)] p-4">
           <Link href={`/users/${listing.seller.id}`} className="flex items-center gap-3">
             <UserAvatar name={listing.seller.displayName} src={listing.seller.avatarUrl} />
@@ -98,10 +98,10 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
         {listing.status === "RESERVED" && (
           <div className="rounded-2xl bg-[var(--chip)] p-4 text-sm">
             <div className="font-black text-[var(--accent)]">已保留</div>
-            <p className="mt-1 text-[var(--muted)]">呢件商品暫時保留緊，唔再接受新出價。</p>
+            <p className="mt-1 text-[var(--muted)]">此商品已暫時保留，不再接受新出價。</p>
             {openTrade && (isOwner || session?.user?.id === openTrade.buyerId) && (
               <Link className="btn-primary mt-3 w-full" href="/trades">
-                去交易中跟進
+                前往交易中跟進
               </Link>
             )}
           </div>
@@ -111,7 +111,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             <SellerListingActions listingId={listing.id} status={listing.status} />
             {listing.status === "ACTIVE" && session?.user?.id && (
               <div className="space-y-2">
-                <div className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">收到嘅出價</div>
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">已收到的出價</div>
                 <SellerOfferList meId={session.user.id} listPrice={listing.priceHkd} offers={pendingOffers} />
               </div>
             )}
@@ -126,7 +126,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               </Link>
             )}
             {me?.canChat === false ? (
-              <p className="text-sm text-[var(--muted)]">你嘅戶口暫時唔可以用站內傾偈。</p>
+              <p className="text-sm text-[var(--muted)]">此帳戶暫時無法使用站內訊息。</p>
             ) : (
               <ContactActions
                 listingId={listing.id}
@@ -136,7 +136,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             )}
           </>
         ) : (
-          !isOwner && <p className="text-sm text-[var(--muted)]">呢件商品而家唔接受新出價。</p>
+          !isOwner && <p className="text-sm text-[var(--muted)]">此商品目前不接受新出價。</p>
         )}
       </aside>
     </div>

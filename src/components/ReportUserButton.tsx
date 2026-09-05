@@ -50,7 +50,7 @@ export function ReportUserButton({ targetUserId, targetName }: { targetUserId: s
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" onClick={() => setOpen(false)}>
           <div className="card w-full max-w-md space-y-3 p-5" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-lg font-black">檢舉 {targetName}</h2>
-            <p className="text-sm text-[var(--muted)]">管理員會即時收到通知，方便跟進呢個帳戶。</p>
+            <p className="text-sm text-[var(--muted)]">管理員會即時收到通知，方便跟進此帳戶。</p>
             <label className="block space-y-1 text-sm font-semibold">
               原因
               <select className="field font-normal" value={reason} onChange={(e) => setReason(e.target.value)}>
@@ -72,7 +72,7 @@ export function ReportUserButton({ targetUserId, targetName }: { targetUserId: s
                 關閉
               </button>
               <button className="btn-primary flex-1" type="button" disabled={busy} onClick={submit}>
-                {busy ? "提交緊…" : "提交檢舉"}
+                {busy ? "提交中…" : "提交檢舉"}
               </button>
             </div>
           </div>

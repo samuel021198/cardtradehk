@@ -34,14 +34,14 @@ export async function POST(req: Request) {
   const listingId = String(body?.listingId ?? "").trim();
   const auctionId = String(body?.auctionId ?? "").trim();
   if (Boolean(listingId) === Boolean(auctionId)) {
-    return NextResponse.json({ error: "請選擇要收藏嘅帖" }, { status: 400 });
+    return NextResponse.json({ error: "請選擇要收藏的商品" }, { status: 400 });
   }
 
   if (listingId) {
     const listing = await prisma.listing.findUnique({ where: { id: listingId } });
-    if (!listing) return NextResponse.json({ error: "搵唔到呢個帖" }, { status: 404 });
+    if (!listing) return NextResponse.json({ error: "找不到此商品" }, { status: 404 });
     if (listing.sellerId === session.user.id) {
-      return NextResponse.json({ error: "唔可以收藏自己嘅帖" }, { status: 400 });
+      return NextResponse.json({ error: "不可收藏自己的商品" }, { status: 400 });
     }
     const favorite = await prisma.favorite.upsert({
       where: { userId_listingId: { userId: session.user.id, listingId } },
@@ -52,9 +52,9 @@ export async function POST(req: Request) {
   }
 
   const auction = await prisma.auction.findUnique({ where: { id: auctionId } });
-  if (!auction) return NextResponse.json({ error: "搵唔到呢場拍賣" }, { status: 404 });
+  if (!auction) return NextResponse.json({ error: "找不到此拍賣" }, { status: 404 });
   if (auction.sellerId === session.user.id) {
-    return NextResponse.json({ error: "唔可以收藏自己嘅拍賣" }, { status: 400 });
+    return NextResponse.json({ error: "不可收藏自己的拍賣" }, { status: 400 });
   }
   const favorite = await prisma.favorite.upsert({
     where: { userId_auctionId: { userId: session.user.id, auctionId } },

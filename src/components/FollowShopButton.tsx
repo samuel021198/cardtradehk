@@ -45,7 +45,7 @@ export function FollowShopButton({
         type="button"
         onClick={toggle}
         disabled={busy}
-        title={on ? "已收藏呢間店" : "收藏商店"}
+        title={on ? "已收藏此商店" : "收藏商店"}
       >
         {busy ? "…" : on ? "★" : "☆"}
       </button>
@@ -54,7 +54,7 @@ export function FollowShopButton({
 
   return (
     <button className={on ? "btn-secondary" : "btn-primary"} type="button" onClick={toggle} disabled={busy}>
-      {busy ? "處理緊…" : on ? "已關注商店" : "關注商店"}
+      {busy ? "處理中…" : on ? "已關注商店" : "關注商店"}
     </button>
   );
 }

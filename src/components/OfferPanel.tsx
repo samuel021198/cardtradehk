@@ -82,26 +82,26 @@ export function OfferPanel({
       {!offer || offer.status === "DECLINED" || offer.status === "CANCELLED" ? (
         <form onSubmit={createOffer} className="space-y-2">
           <label className="block space-y-1 text-sm font-semibold">
-            你嘅出價（HK$）
+            你的出價（HK$）
             <input className="field font-normal" type="number" min={1} value={amount} onChange={(e) => setAmount(e.target.value)} required />
           </label>
           <input className="field" value={note} onChange={(e) => setNote(e.target.value)} placeholder="可選：面交地點／備註" />
           <button className="btn-primary w-full" type="submit" disabled={Boolean(busy)}>
-            {busy === "create" ? "送緊…" : "向賣家出價"}
+            {busy === "create" ? "送出中…" : "向賣家出價"}
           </button>
         </form>
       ) : offer.status === "ACCEPTED" ? (
-        <p className="text-sm font-semibold">呢個出價已接受，商品已保留。去「交易中」跟進交收。</p>
+        <p className="text-sm font-semibold">此出價已獲接受，商品已保留。請前往「交易中」跟進交收。</p>
       ) : (
         <div className="space-y-2">
           <p className="font-black text-[var(--accent)]">目前出價 HK${offer.amountHkd}</p>
           {offer.note && <p className="text-sm text-[var(--muted)]">{offer.note}</p>}
-          <p className="text-sm text-[var(--muted)]">{iProposed ? "已送出，等對方回覆。" : "輪到你回覆：可以接受、拒絕或者還價。"}</p>
+          <p className="text-sm text-[var(--muted)]">{iProposed ? "已送出，等候對方回覆。" : "輪到你回覆：可接受、拒絕或還價。"}</p>
           {myTurn && (
             <>
               <div className="flex flex-wrap gap-2">
                 <button className="btn-primary" type="button" disabled={Boolean(busy)} onClick={() => act("accept")}>
-                  {busy === "accept" ? "處理緊…" : "接受出價"}
+                  {busy === "accept" ? "處理中…" : "接受出價"}
                 </button>
                 <button className="btn-secondary" type="button" disabled={Boolean(busy)} onClick={() => act("decline")}>
                   拒絕

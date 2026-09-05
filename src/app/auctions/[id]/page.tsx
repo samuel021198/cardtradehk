@@ -90,9 +90,9 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
         <p className="text-sm text-[var(--muted)]">
-          完結前 10 分鐘內有人出價，結束時間會自動加 5 分鐘，唔設上限。例如原定 22:05:59，喺 22:01–22:05:59 出價就去到 22:10:59。
+          結束前 10 分鐘內如有人出價，結束時間會自動延長 5 分鐘，不設上限。例如原定 22:05:59，於 22:01–22:05:59 出價，則延至 22:10:59。
         </p>
-        <p className="whitespace-pre-wrap text-[var(--muted)]">{latest.description || "賣家未寫詳情。"}</p>
+        <p className="whitespace-pre-wrap text-[var(--muted)]">{latest.description || "賣家尚未填寫詳情。"}</p>
         <div className="space-y-2 rounded-2xl bg-[var(--chip)] p-4">
           <Link href={`/users/${latest.seller.id}`} className="flex items-center gap-3">
             <UserAvatar name={latest.seller.displayName} src={latest.seller.avatarUrl} />
@@ -105,7 +105,7 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
         </div>
         {stillLive ? (
           isSeller ? (
-            <p className="text-sm text-[var(--muted)]">呢場係你開嘅拍賣。等其他人出價。</p>
+            <p className="text-sm text-[var(--muted)]">這是你開立的拍賣，請等候其他人出價。</p>
           ) : (
             <AuctionBidBox auctionId={latest.id} minNext={minNext} live />
           )
@@ -128,7 +128,7 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
           <p className="text-sm text-[var(--muted)]">拍賣已完結，未有人出價。</p>
         )}
         {!stillLive && !isSeller && !isWinner && top && latest.seller.whatsapp && (
-          <a className="btn-secondary w-full" href={whatsappLink(latest.seller.whatsapp, `你好，我睇緊「${latest.title}」`)} target="_blank" rel="noreferrer">
+          <a className="btn-secondary w-full" href={whatsappLink(latest.seller.whatsapp, `你好，我想查詢「${latest.title}」`)} target="_blank" rel="noreferrer">
             WhatsApp 賣家
           </a>
         )}

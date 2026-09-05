@@ -23,7 +23,7 @@ export async function POST(req: Request, { params }: Params) {
 
   const body = await req.json().catch(() => null);
   const text = String(body?.body ?? "").trim();
-  if (!text) return NextResponse.json({ error: "訊息唔可以空" }, { status: 400 });
+  if (!text) return NextResponse.json({ error: "訊息不可空白" }, { status: 400 });
 
   const [message] = await prisma.$transaction([
     prisma.message.create({

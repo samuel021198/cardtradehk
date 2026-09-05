@@ -54,7 +54,7 @@ export async function POST(req: Request) {
   if (password.length < 6) return NextResponse.json({ error: "密碼至少 6 個字元" }, { status: 400 });
 
   const exists = await prisma.user.findUnique({ where: { phone } });
-  if (exists) return NextResponse.json({ error: "呢個電話已經有戶口" }, { status: 409 });
+  if (exists) return NextResponse.json({ error: "此電話已有帳戶" }, { status: 409 });
 
   const user = await prisma.user.create({
     data: {

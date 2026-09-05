@@ -17,10 +17,10 @@ export async function PATCH(req: Request, { params }: Params) {
     include: { listing: true },
   });
   if (!offer || (offer.buyerId !== session.user.id && offer.sellerId !== session.user.id)) {
-    return NextResponse.json({ error: "搵唔到呢個出價" }, { status: 404 });
+    return NextResponse.json({ error: "找不到此出價" }, { status: 404 });
   }
   if (offer.status !== OFFER_STATUS.PENDING) {
-    return NextResponse.json({ error: "呢個出價已經完結" }, { status: 400 });
+    return NextResponse.json({ error: "此出價已經完結" }, { status: 400 });
   }
 
   const body = await req.json().catch(() => null);
@@ -35,7 +35,7 @@ export async function PATCH(req: Request, { params }: Params) {
     await notifyUser(offer.sellerId, {
       type: NOTIFICATION_TYPE.OFFER,
       title: "買家收回出價",
-      body: `「${offer.listing.title}」嘅 HK$${offer.amountHkd} 出價已取消`,
+      body: `「${offer.listing.title}」的 HK$${offer.amountHkd} 出價已取消`,
       href: `/listings/${offer.listingId}`,
       listingId: offer.listingId,
       shopId: offer.sellerId,
@@ -44,13 +44,13 @@ export async function PATCH(req: Request, { params }: Params) {
   }
 
   if (action === "decline") {
-    if (!myTurn && !isSeller) return NextResponse.json({ error: "而家唔輪到你回覆" }, { status: 403 });
+    if (!myTurn && !isSeller) return NextResponse.json({ error: "目前尚未輪到你回覆" }, { status: 403 });
     const updated = await prisma.offer.update({ where: { id }, data: { status: OFFER_STATUS.DECLINED } });
     const otherId = isSeller ? offer.buyerId : offer.sellerId;
     await notifyUser(otherId, {
       type: NOTIFICATION_TYPE.OFFER,
       title: "出價被拒絕",
-      body: `「${offer.listing.title}」HK$${offer.amountHkd} 唔傾成`,
+      body: `「${offer.listing.title}」HK$${offer.amountHkd} 未達成`,
       href: `/listings/${offer.listingId}`,
       listingId: offer.listingId,
       shopId: offer.sellerId,
@@ -61,7 +61,7 @@ export async function PATCH(req: Request, { params }: Params) {
   if (action === "counter") {
     if (!myTurn) return NextResponse.json({ error: "等對方回覆先再議價" }, { status: 403 });
     if (offer.listing.status !== LISTING_STATUS.ACTIVE) {
-      return NextResponse.json({ error: "商品而家唔可以再議價" }, { status: 400 });
+      return NextResponse.json({ error: "商品目前不可再議價" }, { status: 400 });
     }
     const amountHkd = Number(body?.amountHkd);
     const note = String(body?.note ?? "").trim().slice(0, 200);
@@ -92,7 +92,7 @@ export async function PATCH(req: Request, { params }: Params) {
   }
 
   if (action === "accept") {
-    if (!myTurn) return NextResponse.json({ error: "唔可以接受自己出嘅價，等對方回覆" }, { status: 403 });
+    if (!myTurn) return NextResponse.json({ error: "不可接受自己提出的價格，請等候對方回覆" }, { status: 403 });
     try {
       const trade = await reserveListing({
         listing: offer.listing,

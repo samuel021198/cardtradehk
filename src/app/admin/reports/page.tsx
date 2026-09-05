@@ -71,7 +71,7 @@ export default function AdminReportsPage() {
               </p>
               <div className="mt-3 flex gap-2">
                 <Link className="btn-secondary px-3 py-1 text-xs" href={`/admin/users/${r.target.id}`}>
-                  睇帳戶
+                  查看帳戶
                 </Link>
                 {r.status !== "DONE" && (
                   <button className="btn-primary px-3 py-1 text-xs" type="button" onClick={() => mark(r.id, "DONE")}>

@@ -49,7 +49,7 @@ async function seedAuctionMessages(
   auctionUrl: string,
 ) {
   const congratulations = `恭喜你以$${amountHkd}拍得「${auctionUrl}」`;
-  const fulfillment = `交收方式：${seller.deliveryNote?.trim() || "（未設定，請喺「我嘅」填寫預設交收方式）"}\n付款方法：${seller.paymentNote?.trim() || "（未設定，請喺「我嘅」填寫預設付款方法）"}`;
+  const fulfillment = `交收方式：${seller.deliveryNote?.trim() || "（未設定，請於「帳戶」填寫預設交收方式）"}\n付款方法：${seller.paymentNote?.trim() || "（未設定，請於「帳戶」填寫預設付款方法）"}`;
 
   await prisma.message.createMany({
     data: [
@@ -81,15 +81,15 @@ export async function POST(req: Request) {
         bids: { orderBy: { amountHkd: "desc" } },
       },
     });
-    if (!auction) return NextResponse.json({ error: "搵唔到呢場拍賣" }, { status: 404 });
+    if (!auction) return NextResponse.json({ error: "找不到此拍賣" }, { status: 404 });
     const live = auctionIsLive(auction.endsAt, auction.status);
-    if (live) return NextResponse.json({ error: "拍賣未完結，暫時唔可以開傾偈" }, { status: 400 });
+    if (live) return NextResponse.json({ error: "拍賣尚未完結，暫時無法開啟對話" }, { status: 400 });
     const winnerId = auction.bids[0]?.bidderId;
     const contactBidderId = String(body?.contactBidderId ?? "").trim() || winnerId;
-    if (!winnerId) return NextResponse.json({ error: "呢場拍賣未有得標者" }, { status: 400 });
+    if (!winnerId) return NextResponse.json({ error: "此拍賣尚未有得標者" }, { status: 400 });
     const bid = auction.bids.find((b) => b.bidderId === contactBidderId) ?? auction.bids[0];
     if (session.user.id !== auction.sellerId && session.user.id !== contactBidderId) {
-      return NextResponse.json({ error: "只有賣家或該出價者可以開呢個對話" }, { status: 403 });
+      return NextResponse.json({ error: "僅賣家或該出價者可以開啟此對話" }, { status: 403 });
     }
     if (session.user.id !== auction.sellerId && contactBidderId !== winnerId) {
       return NextResponse.json({ error: "只有得標者或賣家可以開對話" }, { status: 403 });
@@ -122,9 +122,9 @@ export async function POST(req: Request) {
 
   const shopId = String(body?.shopId ?? "").trim();
   if (shopId) {
-    if (shopId === session.user.id) return NextResponse.json({ error: "唔可以同自己傾偈" }, { status: 400 });
+    if (shopId === session.user.id) return NextResponse.json({ error: "不可與自己開啟對話" }, { status: 400 });
     const shop = await prisma.user.findUnique({ where: { id: shopId } });
-    if (!shop) return NextResponse.json({ error: "搵唔到呢個帳戶" }, { status: 404 });
+    if (!shop) return NextResponse.json({ error: "找不到此帳戶" }, { status: 404 });
     const existing = await prisma.conversation.findFirst({
       where: { sellerId: shopId, buyerId: session.user.id, listingId: null, auctionId: null },
     });
@@ -137,9 +137,9 @@ export async function POST(req: Request) {
 
   const listingId = String(body?.listingId ?? "");
   const listing = await prisma.listing.findUnique({ where: { id: listingId } });
-  if (!listing) return NextResponse.json({ error: "找不到帖文" }, { status: 404 });
+  if (!listing) return NextResponse.json({ error: "找不到商品" }, { status: 404 });
   if (listing.sellerId === session.user.id) {
-    return NextResponse.json({ error: "唔可以同自己傾偈" }, { status: 400 });
+    return NextResponse.json({ error: "不可與自己開啟對話" }, { status: 400 });
   }
 
   const conversation = await prisma.conversation.upsert({

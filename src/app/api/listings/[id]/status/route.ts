@@ -15,7 +15,7 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params;
   const listing = await prisma.listing.findUnique({ where: { id } });
   if (!listing || listing.sellerId !== session.user.id) {
-    return NextResponse.json({ error: "搵唔到呢個帖，或者你無權限" }, { status: 404 });
+    return NextResponse.json({ error: "找不到此商品，或你沒有權限" }, { status: 404 });
   }
 
   const body = await req.json().catch(() => null);
@@ -24,7 +24,7 @@ export async function PATCH(req: Request, { params }: Params) {
     return NextResponse.json({ error: "狀態無效" }, { status: 400 });
   }
   if (status === LISTING_STATUS.RESERVED) {
-    return NextResponse.json({ error: "請用「已保留」揀買家，或者接受出價" }, { status: 400 });
+    return NextResponse.json({ error: "請以「已保留」選擇買家，或接受出價" }, { status: 400 });
   }
 
   const updated = await prisma.listing.update({ where: { id }, data: { status } });

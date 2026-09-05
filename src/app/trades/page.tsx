@@ -151,7 +151,7 @@ export default async function TradesPage({
           <p className="text-sm font-bold text-[var(--accent)]">買賣跟進</p>
           <h1 className="mt-1 text-2xl font-black tracking-tight md:text-3xl">交易中</h1>
           <p className="mt-2 max-w-2xl text-[var(--muted)]">
-            賣家發貨 → 買家收貨 → 互評。用下面篩選睇你要處理嘅單。
+            賣家發貨 → 買家收貨 → 互評。請使用以下篩選檢視待處理交易。
           </p>
         </div>
         <div className="chip-row md:flex-wrap md:overflow-visible">
@@ -213,7 +213,7 @@ export default async function TradesPage({
       )}
 
       {tab === "todo" && myAction.length === 0 && needReview.length === 0 && visibleOffers.filter((o) => o.proposedById !== meId).length === 0 && (
-        <p className="text-[var(--muted)]">而家冇等你處理嘅單。</p>
+        <p className="text-[var(--muted)]">目前沒有待你處理的交易。</p>
       )}
 
       {(tab === "todo" ? myAction : tab === "active" ? active : []).length > 0 && (tab === "todo" || tab === "active") && (
@@ -228,7 +228,7 @@ export default async function TradesPage({
               const title = item?.title ?? "交易";
               const cover = item ? parseImages(item.images)[0] : "";
               const sourceLabel =
-                trade.source === "OFFER" ? "由出價確認" : trade.source === "AUCTION" ? "拍賣得標" : "人手保留";
+                trade.source === "OFFER" ? "由出價確認" : trade.source === "AUCTION" ? "拍賣得標" : "手動保留";
               return (
                 <article key={trade.id} className="card grid gap-4 p-4 md:grid-cols-[96px_1fr_240px]">
                   <Link href={href} className="overflow-hidden rounded-xl bg-[var(--chip)]">
@@ -249,7 +249,7 @@ export default async function TradesPage({
                     </p>
                     {trade.conversationId && (
                       <Link className="mt-2 inline-block text-sm underline" href={`/messages/${trade.conversationId}`}>
-                        去訊息
+                        前往訊息
                       </Link>
                     )}
                   </div>
@@ -329,7 +329,7 @@ export default async function TradesPage({
                     </div>
                     {reviewed && (
                       <Link className="text-sm underline" href={`/users/${other.id}/reviews`}>
-                        睇 {other.displayName} 嘅評分
+                        查看 {other.displayName} 的評分
                       </Link>
                     )}
                   </article>

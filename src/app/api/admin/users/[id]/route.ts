@@ -13,7 +13,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
   const { id } = await params;
   const user = await prisma.user.findUnique({ where: { id } });
-  if (!user) return NextResponse.json({ error: "搵唔到用戶" }, { status: 404 });
+  if (!user) return NextResponse.json({ error: "找不到用戶" }, { status: 404 });
 
   const body = await req.json().catch(() => null);
   const data: {
@@ -42,7 +42,7 @@ export async function PATCH(req: Request, { params }: Params) {
       return NextResponse.json({ error: "狀態無效" }, { status: 400 });
     }
     if (id === admin.id && status === USER_STATUS.BLOCKED) {
-      return NextResponse.json({ error: "唔可以封鎖自己" }, { status: 400 });
+      return NextResponse.json({ error: "不可封鎖自己" }, { status: 400 });
     }
     data.status = status;
   }
@@ -53,7 +53,7 @@ export async function PATCH(req: Request, { params }: Params) {
       return NextResponse.json({ error: "角色無效" }, { status: 400 });
     }
     if (id === admin.id && role !== "ADMIN") {
-      return NextResponse.json({ error: "唔可以取消自己嘅管理員" }, { status: 400 });
+      return NextResponse.json({ error: "不可取消自己的管理員身分" }, { status: 400 });
     }
     data.role = role;
   }
@@ -114,15 +114,15 @@ export async function DELETE(_req: Request, { params }: Params) {
   if (!admin) return NextResponse.json({ error: "沒有管理員權限" }, { status: 403 });
 
   const { id } = await params;
-  if (id === admin.id) return NextResponse.json({ error: "唔可以刪除自己" }, { status: 400 });
+  if (id === admin.id) return NextResponse.json({ error: "不可刪除自己" }, { status: 400 });
 
   const user = await prisma.user.findUnique({ where: { id } });
-  if (!user) return NextResponse.json({ error: "搵唔到用戶" }, { status: 404 });
+  if (!user) return NextResponse.json({ error: "找不到用戶" }, { status: 404 });
 
   if (user.role === "ADMIN") {
     const adminCount = await prisma.user.count({ where: { role: "ADMIN" } });
     if (adminCount <= 1) {
-      return NextResponse.json({ error: "唔可以刪除最後一個管理員" }, { status: 400 });
+      return NextResponse.json({ error: "不可刪除最後一名管理員" }, { status: 400 });
     }
   }
 

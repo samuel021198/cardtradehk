@@ -42,27 +42,27 @@ export function SellerListingActions({
       <div className="flex flex-wrap gap-2">
         {status === "ACTIVE" && (
           <button className={btn} type="button" disabled={Boolean(loading)} onClick={() => setStatus("SOLD")}>
-            {loading === "SOLD" ? "更新緊…" : "標記已出售"}
+            {loading === "SOLD" ? "更新中…" : "標記已出售"}
           </button>
         )}
         {status === "RESERVED" && (
           <Link className={btn} href="/trades">
-            去交易中
+            前往交易中
           </Link>
         )}
         {status === "SOLD" && (
           <button className={btn} type="button" disabled={Boolean(loading)} onClick={() => setStatus("ACTIVE")}>
-            {loading === "ACTIVE" ? "更新緊…" : "重新上架"}
+            {loading === "ACTIVE" ? "更新中…" : "重新上架"}
           </button>
         )}
         {status === "HIDDEN" && (
           <button className={btn} type="button" disabled={Boolean(loading)} onClick={() => setStatus("ACTIVE")}>
-            {loading === "ACTIVE" ? "更新緊…" : "重新上架"}
+            {loading === "ACTIVE" ? "更新中…" : "重新上架"}
           </button>
         )}
         {status === "ACTIVE" && (
           <button className={btnAlt} type="button" disabled={Boolean(loading)} onClick={() => setStatus("HIDDEN")}>
-            {loading === "HIDDEN" ? "更新緊…" : "隱藏"}
+            {loading === "HIDDEN" ? "更新中…" : "隱藏"}
           </button>
         )}
         {status === "ACTIVE" && <ReserveListingButton listingId={listingId} compact={compact} />}

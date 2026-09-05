@@ -59,7 +59,7 @@ export function ProfileForm({
   return (
     <form onSubmit={onSubmit} className="card space-y-4 p-6">
       <h2 className="text-xl font-black">個人設定</h2>
-      <p className="text-sm text-[var(--muted)]">登入電話：{formatHkPhone(phone)}（用嚟登入，唔會公開）</p>
+      <p className="text-sm text-[var(--muted)]">登入電話：{formatHkPhone(phone)}（僅供登入，不會公開）</p>
       <div className="flex items-center gap-4">
         <UserAvatar name={name} src={avatar} size="lg" />
         <label className="file-btn">
@@ -87,7 +87,7 @@ export function ProfileForm({
           />
         </label>
       </div>
-      <p className="text-xs text-[var(--muted)]">頭像會出現喺聊天、商店同頂欄，方便其他人認到你。</p>
+      <p className="text-xs text-[var(--muted)]">頭像會顯示於對話、商店及頂欄，方便其他會員識別。</p>
       <label className="block space-y-1 text-sm font-semibold">
         顯示名稱
         <input className="field font-normal" value={name} onChange={(e) => setName(e.target.value)} />
@@ -118,7 +118,7 @@ export function ProfileForm({
           placeholder="例如：PayMe／轉數快／現金"
         />
       </label>
-      <p className="text-xs text-[var(--muted)]">拍賣完結後聯絡得標者時，呢兩段會自動變成第二則訊息。</p>
+      <p className="text-xs text-[var(--muted)]">拍賣完結後聯絡得標者時，以上兩段會自動成為第二則訊息。</p>
       {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
       {ok && <p className="text-sm font-semibold text-emerald-700">{ok}</p>}
       <button className="btn-primary" type="submit">

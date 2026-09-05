@@ -74,7 +74,7 @@ export function AuctionForm() {
     }
     const draft = currentDraft();
     if (draft.title.trim().length < 2 || !Number.isInteger(draft.startingBidHkd) || draft.startingBidHkd < 1) {
-      setError("請先填標題同起拍價，再加入清單");
+      setError("請先填寫標題及起拍價，再加入清單");
       return;
     }
     setQueue((prev) => [...prev, draft]);
@@ -100,7 +100,7 @@ export function AuctionForm() {
       router.push(items.length === 1 ? `/auctions/${data.id}` : "/selling");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "出咗錯");
+      setError(err instanceof Error ? err.message : "發生錯誤");
     } finally {
       setPending(false);
     }
@@ -110,7 +110,7 @@ export function AuctionForm() {
     <form onSubmit={onSubmit} className="card mx-auto max-w-2xl space-y-4 p-6">
       <h1 className="text-2xl font-black">開拍</h1>
       <p className="text-sm text-[var(--muted)]">
-        分類同買野一樣。拍賣時間最多一星期，平台唔經手付款。可以一次過加入最多 {MAX_BATCH_POST} 場。
+        分類與消費頁相同。拍賣時間最長一星期，平台不經手付款。可一次加入最多 {MAX_BATCH_POST} 場。
       </p>
       <label className="block space-y-1 text-sm font-semibold">
         標題
@@ -219,7 +219,7 @@ export function AuctionForm() {
           加入清單（再開下一場）
         </button>
         <button className="btn-primary" disabled={pending} type="submit">
-          {pending ? "開拍緊…" : queue.length > 0 ? `一次過開拍 ${queue.length + (title.trim() ? 1 : 0)} 場` : "開始拍賣"}
+          {pending ? "開拍中…" : queue.length > 0 ? `一次開拍 ${queue.length + (title.trim() ? 1 : 0)} 場` : "開始拍賣"}
         </button>
       </div>
     </form>

@@ -25,12 +25,12 @@ export default async function UserReviewsPage({ params }: { params: Promise<{ id
   return (
     <div className="mx-auto max-w-xl space-y-4">
       <Link className="text-sm font-bold text-[var(--accent)]" href={`/users/${user.id}`}>
-        ← 返帳戶
+        ← 返回帳戶
       </Link>
       <div className="flex items-center gap-3">
         <UserAvatar name={user.displayName} src={user.avatarUrl} size="lg" />
         <div>
-          <h1 className="text-2xl font-black">{user.displayName} 嘅評分</h1>
+          <h1 className="text-2xl font-black">{user.displayName} 的評分</h1>
           <p className="text-sm text-[var(--muted)]">
             {avg ? `${avg.toFixed(1)} / 5 · ${user.reviewsReceived.length} 則` : "未有評價"}
           </p>
@@ -50,7 +50,7 @@ export default async function UserReviewsPage({ params }: { params: Promise<{ id
                 {"★".repeat(r.rating)}
                 {"☆".repeat(5 - r.rating)}
               </div>
-              <p className="mt-1 text-sm">{r.comment || "未寫評語。"}</p>
+              <p className="mt-1 text-sm">{r.comment || "尚未填寫評語。"}</p>
               <div className="mt-2 text-xs text-[var(--muted)]">{r.createdAt.toLocaleString("zh-HK")}</div>
             </div>
           ))}

@@ -12,7 +12,7 @@ export async function POST(req: Request, { params }: Params) {
   const { id } = await params;
   const listing = await prisma.listing.findUnique({ where: { id } });
   if (!listing || listing.sellerId !== session.user.id) {
-    return NextResponse.json({ error: "只有賣家可以人手保留" }, { status: 404 });
+    return NextResponse.json({ error: "僅賣家可以手動保留" }, { status: 404 });
   }
 
   const body = await req.json().catch(() => null);
@@ -24,7 +24,7 @@ export async function POST(req: Request, { params }: Params) {
   }
 
   const buyer = await prisma.user.findUnique({ where: { id: buyerId } });
-  if (!buyer) return NextResponse.json({ error: "搵唔到買家" }, { status: 404 });
+  if (!buyer) return NextResponse.json({ error: "找不到買家" }, { status: 404 });
 
   try {
     const trade = await reserveListing({

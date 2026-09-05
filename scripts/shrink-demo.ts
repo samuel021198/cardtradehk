@@ -1,7 +1,7 @@
 import path from "path";
 import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { DEMO_PRODUCTS } from "./demo-catalog";
+import { auctionSeed, DEMO_AUCTIONS, DEMO_PRODUCTS } from "./demo-catalog";
 
 loadEnv({ path: path.join(process.cwd(), ".env"), override: true });
 const prisma = new PrismaClient();
@@ -40,6 +40,10 @@ async function main() {
     })),
   });
 
+  await prisma.auction.createMany({
+    data: DEMO_AUCTIONS.map((item, index) => auctionSeed(item, seller.id, index)),
+  });
+
   const counts = await prisma.listing.groupBy({
     by: ["game"],
     where: { sellerId: seller.id, status: "ACTIVE" },
@@ -50,7 +54,8 @@ async function main() {
     deletedUsers: dropped.count,
     deletedListings: goneListings.count,
     deletedAuctions: goneAuctions.count,
-    created: DEMO_PRODUCTS.length,
+    createdListings: DEMO_PRODUCTS.length,
+    createdAuctions: DEMO_AUCTIONS.length,
     byGame: Object.fromEntries(counts.map((c) => [c.game, c._count])),
     seller: seller.username,
   });

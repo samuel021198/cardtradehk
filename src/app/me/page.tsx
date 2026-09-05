@@ -30,12 +30,12 @@ export default async function MePage() {
       <section className="card space-y-4 p-6">
         <h2 className="text-xl font-black">我的商品</h2>
         <p className="text-sm text-[var(--muted)]">
-          而家有 {user.listings.filter((l) => l.status === "ACTIVE").length} 個放售中、
-          {user.listings.filter((l) => l.status === "SOLD").length} 個已售。
+          目前有 {user.listings.filter((l) => l.status === "ACTIVE").length} 件放售中、
+          {user.listings.filter((l) => l.status === "SOLD").length} 件已售。
         </p>
         <div className="flex flex-wrap gap-2">
           <Link className="btn-primary" href="/selling">
-            睇我的商品
+            查看我的商品
           </Link>
           <Link className="btn-secondary" href="/listings/new">
             新放售

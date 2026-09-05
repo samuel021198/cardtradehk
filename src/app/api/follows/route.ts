@@ -12,11 +12,11 @@ export async function POST(req: Request) {
   const shopId = String(body?.shopId ?? "").trim();
   if (!shopId) return NextResponse.json({ error: "缺少商店" }, { status: 400 });
   if (shopId === session.user.id) {
-    return NextResponse.json({ error: "唔可以關注自己" }, { status: 400 });
+    return NextResponse.json({ error: "不可關注自己" }, { status: 400 });
   }
 
   const shop = await prisma.user.findUnique({ where: { id: shopId } });
-  if (!shop) return NextResponse.json({ error: "搵唔到呢間店" }, { status: 404 });
+  if (!shop) return NextResponse.json({ error: "找不到此商店" }, { status: 404 });
 
   const follow = await prisma.shopFollow.upsert({
     where: { userId_shopId: { userId: session.user.id, shopId } },

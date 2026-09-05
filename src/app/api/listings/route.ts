@@ -5,6 +5,7 @@ import { LISTING_STATUS, isValidCardType } from "@/lib/constants";
 import { featureDenied, getCurrentUser, USER_STATUS } from "@/lib/permissions";
 import { notifyShopNewListing } from "@/lib/notify";
 import { parseBatch, parseListingDraft } from "@/lib/listing-input";
+import { listingSearchWhere } from "@/lib/search";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -17,16 +18,7 @@ export async function GET(req: Request) {
     where: {
       status: LISTING_STATUS.ACTIVE,
       seller: { status: { not: USER_STATUS.BLOCKED } },
-      ...(cardType ? { cardType } : {}),
-      ...(game ? { game } : {}),
-      ...(q
-        ? {
-            OR: [
-              { title: { contains: q } },
-              { description: { contains: q } },
-            ],
-          }
-        : {}),
+      ...listingSearchWhere(q, { game, cardType }),
     },
     include: {
       seller: { select: { id: true, displayName: true, whatsapp: true } },

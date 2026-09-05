@@ -31,10 +31,10 @@ export function ContactActions({
         router.push(`/login?callbackUrl=/listings/${listingId}`);
         return;
       }
-      if (!res.ok) throw new Error(data.error || "開唔到對話");
+      if (!res.ok) throw new Error(data.error || "無法開啟對話");
       router.push(`/messages/${data.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "出咗錯");
+      setError(err instanceof Error ? err.message : "發生錯誤");
     } finally {
       setPending(false);
     }
@@ -43,12 +43,12 @@ export function ContactActions({
   return (
     <div className="space-y-2">
       <button className="btn-primary w-full" disabled={pending} type="button" onClick={startChat}>
-        {pending ? "開啟緊…" : "站內傾偈"}
+        {pending ? "開啟中…" : "站內訊息"}
       </button>
       {sellerWhatsapp ? (
         <a
           className="btn-secondary w-full"
-          href={whatsappLink(sellerWhatsapp, `你好，我想問吓「${listingTitle}」仲喺唔喺？`)}
+          href={whatsappLink(sellerWhatsapp, `你好，想確認「${listingTitle}」是否仍可供購買。`)}
           target="_blank"
           rel="noreferrer"
         >

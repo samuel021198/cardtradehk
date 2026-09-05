@@ -38,7 +38,7 @@ export function ReviewForm({
   }
 
   if (done) {
-    return <p className="text-sm font-semibold text-emerald-500">已送出對 {otherName} 嘅評分。</p>;
+    return <p className="text-sm font-semibold text-emerald-500">已送出對 {otherName} 的評分。</p>;
   }
 
   return (
@@ -46,7 +46,7 @@ export function ReviewForm({
       {!compact && (
         <div>
           <p className="text-sm font-black">評價 {otherName}</p>
-          <p className="text-xs text-[var(--muted)]">交易已完成。寫低交收、卡況同態度，方便其他卡友。</p>
+          <p className="text-xs text-[var(--muted)]">交易已完成。請記錄交收、卡況與態度，供其他會員參考。</p>
         </div>
       )}
       {compact && <div className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">評價 {otherName}</div>}
@@ -68,10 +68,10 @@ export function ReviewForm({
         className="field min-h-24"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="例如：準時面交、卡同相一樣、包裝穩陣…"
+        placeholder="例如：準時面交、卡況與相片相符、包裝穩妥…"
       />
       <button className="btn-primary w-full" type="button" disabled={busy} onClick={submit}>
-        {busy ? "送出緊…" : "送出評分"}
+        {busy ? "送出中…" : "送出評分"}
       </button>
       {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
     </div>

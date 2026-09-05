@@ -25,9 +25,9 @@ export async function reserveListing(opts: {
   actorId: string;
 }) {
   const open = await findOpenTrade(opts.listing.id);
-  if (open) throw new Error("呢件商品已經保留緊");
-  if (opts.listing.status !== LISTING_STATUS.ACTIVE) throw new Error("只有放售中嘅商品先可以保留");
-  if (opts.buyerId === opts.listing.sellerId) throw new Error("唔可以保留俾自己");
+  if (open) throw new Error("此商品已在保留中");
+  if (opts.listing.status !== LISTING_STATUS.ACTIVE) throw new Error("僅放售中的商品可以保留");
+  if (opts.buyerId === opts.listing.sellerId) throw new Error("不可為自己保留商品");
 
   const conversation = await ensureListingConversation(opts.listing.id, opts.buyerId, opts.listing.sellerId);
   const trade = await prisma.trade.create({
@@ -60,12 +60,12 @@ export async function reserveListing(opts: {
     data: { status: OFFER_STATUS.DECLINED },
   });
 
-  const sourceText = opts.source === TRADE_SOURCE.OFFER ? `雙方同意 HK$${opts.amountHkd}` : `賣家人手保留，成交價 HK$${opts.amountHkd}`;
+  const sourceText = opts.source === TRADE_SOURCE.OFFER ? `雙方同意 HK$${opts.amountHkd}` : `賣家手動保留，成交價 HK$${opts.amountHkd}`;
   await prisma.message.create({
     data: {
       conversationId: conversation.id,
       senderId: opts.actorId,
-      body: `商品已保留。${sourceText}。流程：賣家先確認發貨，買家再確認收貨，完成後去「交易中」互評。`,
+      body: `商品已保留。${sourceText}。流程：賣家先確認發貨，買家再確認收貨，完成後請前往「交易中」互評。`,
     },
   });
 
@@ -99,7 +99,7 @@ export async function completeTrade(tradeId: string) {
     notifyUser(trade.buyerId, {
       type: NOTIFICATION_TYPE.TRADE,
       title: "交易完成，請評分",
-      body: `「${title}」買家已確認收貨。去「交易中」評價對方。`,
+      body: `「${title}」買家已確認收貨。請前往「交易中」評價對方。`,
       href: "/trades",
       listingId: trade.listingId,
       shopId: trade.sellerId,
@@ -107,7 +107,7 @@ export async function completeTrade(tradeId: string) {
     notifyUser(trade.sellerId, {
       type: NOTIFICATION_TYPE.TRADE,
       title: "交易完成，請評分",
-      body: `「${title}」已完成。去「交易中」評價買家。`,
+      body: `「${title}」已完成。請前往「交易中」評價買家。`,
       href: "/trades",
       listingId: trade.listingId,
       shopId: trade.sellerId,

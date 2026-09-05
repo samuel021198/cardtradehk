@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   const urls: string[] = [];
   for (const file of files) {
     if (!ALLOWED.has(file.type) || file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: "只接受 5MB 以內嘅 JPG／PNG／WEBP" }, { status: 400 });
+      return NextResponse.json({ error: "只接受 5MB 以內的 JPG／PNG／WEBP" }, { status: 400 });
     }
     urls.push(
       await savePublicImage({

@@ -122,7 +122,7 @@ export default async function UserPage({
             <h1 className="text-xl font-black">{user.displayName}</h1>
             <span className="rounded-full bg-[var(--accent)] px-2 py-0.5 text-xs font-black text-black">{tierLabel(user.membershipTier)}</span>
           </div>
-          <p className="mt-2 whitespace-pre-wrap text-sm">{user.bio || "呢位卡友未寫簡介。"}</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm">{user.bio || "此會員尚未填寫簡介。"}</p>
         </div>
       </section>
 
@@ -131,7 +131,7 @@ export default async function UserPage({
       {tab === "featured" && (
         featured.length === 0 ? (
           <p className="py-10 text-center text-sm text-[var(--muted)]">
-            {isOwn ? "未有精選。去「售賣」或「拍賣」釘選最多 3 個帖。" : "賣家未釘選精選帖。"}
+            {isOwn ? "尚未設定精選。請於「售賣」或「拍賣」釘選最多 3 件商品。" : "賣家尚未釘選精選商品。"}
           </p>
         ) : (
           <div className="grid grid-cols-3 gap-0.5">
