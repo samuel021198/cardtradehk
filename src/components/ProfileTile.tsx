@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CoverImage } from "@/components/CoverImage";
 
 export function ProfileTile({
   href,
@@ -44,12 +45,7 @@ export function ProfileTile({
     <div className="relative">
       <Link href={href} className="group block overflow-hidden bg-[var(--chip)]">
         <div className="relative aspect-square">
-          {image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={image} alt={title} className="h-full w-full object-cover" />
-          ) : (
-            <div className="grid h-full place-items-center px-2 text-center text-xs font-bold text-[var(--muted)]">{title}</div>
-          )}
+          <CoverImage src={image} alt={title} />
           {priceLabel && (
             <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-black text-[var(--accent)]">
               {priceLabel}

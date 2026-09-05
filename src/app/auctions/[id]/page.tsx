@@ -14,6 +14,7 @@ import { viewerWatchState } from "@/lib/watch";
 import { whatsappLink } from "@/lib/phone";
 import { UserAvatar } from "@/components/UserAvatar";
 import { TRADE_STATUS } from "@/lib/constants";
+import { CoverImage } from "@/components/CoverImage";
 
 export const dynamic = "force-dynamic";
 
@@ -64,12 +65,7 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <section className="space-y-3">
         <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--chip)]">
-          {images[0] ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={images[0]} alt={latest.title} className="max-h-[520px] w-full object-contain bg-black" />
-          ) : (
-            <div className="grid h-80 place-items-center font-black">{latest.title}</div>
-          )}
+          <CoverImage src={images[0]} alt={latest.title} className="max-h-[520px] w-full object-contain bg-black" priority />
         </div>
       </section>
       <aside className="card space-y-4 p-6">

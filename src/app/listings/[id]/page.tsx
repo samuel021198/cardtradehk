@@ -12,6 +12,7 @@ import { getCurrentUser, USER_STATUS } from "@/lib/permissions";
 import { viewerWatchState } from "@/lib/watch";
 import { UserAvatar } from "@/components/UserAvatar";
 import { OFFER_STATUS, TRADE_STATUS } from "@/lib/constants";
+import { CoverImage } from "@/components/CoverImage";
 
 export const dynamic = "force-dynamic";
 
@@ -57,18 +58,13 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <section className="space-y-3">
         <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--chip)]">
-          {images[0] ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={images[0]} alt={listing.title} className="max-h-[520px] w-full object-contain bg-black" />
-          ) : (
-            <div className="grid h-80 place-items-center font-black">{listing.title}</div>
-          )}
+          <CoverImage src={images[0]} alt={listing.title} className="max-h-[520px] w-full object-contain bg-black" priority />
         </div>
         {images.length > 1 && (
           <div className="grid grid-cols-4 gap-2">
             {images.slice(1).map((src) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={src} src={src} alt="" className="aspect-square rounded-xl object-cover" />
+              <CoverImage key={src} src={src} alt="" className="aspect-square rounded-xl object-cover" />
             ))}
           </div>
         )}
