@@ -52,11 +52,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     session({ session, token }) {
-      session.user.id = token.id;
-      session.user.phone = token.phone;
-      session.user.displayName = token.displayName;
-      session.user.role = token.role;
-      session.user.name = token.displayName;
+      session.user.id = String(token.id ?? "");
+      session.user.phone = String(token.phone ?? "");
+      session.user.displayName = String(token.displayName ?? "");
+      session.user.role = String(token.role ?? "");
+      session.user.name = String(token.displayName ?? "");
       return session;
     },
   },
