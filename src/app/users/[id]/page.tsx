@@ -135,8 +135,18 @@ export default async function UserPage({
           </p>
         ) : (
           <div className="grid grid-cols-3 gap-0.5">
-            {featured.map(({ key, pinnedAt: _pinnedAt, ...item }) => (
-              <ProfileTile key={key} {...item} canPin={isOwn} />
+            {featured.map((item) => (
+              <ProfileTile
+                key={item.key}
+                href={item.href}
+                title={item.title}
+                image={item.image}
+                priceLabel={item.priceLabel}
+                pinned={item.pinned}
+                canPin={isOwn}
+                listingId={"listingId" in item ? item.listingId : undefined}
+                auctionId={"auctionId" in item ? item.auctionId : undefined}
+              />
             ))}
           </div>
         )

@@ -7,7 +7,7 @@ import { REPORT_REASONS } from "@/lib/tiers";
 export function ReportUserButton({ targetUserId, targetName }: { targetUserId: string; targetName: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [reason, setReason] = useState(REPORT_REASONS[0].value);
+  const [reason, setReason] = useState<string>(REPORT_REASONS[0].value);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
