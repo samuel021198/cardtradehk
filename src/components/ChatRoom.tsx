@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatHkPhone, whatsappLink } from "@/lib/phone";
 import { UserAvatar } from "@/components/UserAvatar";
+import { ReviewForm } from "@/components/ReviewForm";
+import { TradeActions } from "@/components/TradeActions";
 
 type Message = {
   id: string;
@@ -28,11 +30,14 @@ type ConversationPayload = {
   buyer: { id: string; displayName: string; whatsapp: string | null; avatarUrl?: string | null };
   seller: { id: string; displayName: string; whatsapp: string | null; avatarUrl?: string | null };
   messages: Message[];
-  deal: {
+  trade: {
     id: string;
-    confirmedByBuyer: boolean;
-    confirmedBySeller: boolean;
-    completedAt: string | null;
+    status: string;
+    source: string;
+    sellerShippedAt: string | null;
+    buyerReceivedAt: string | null;
+    winnerAckAt: string | null;
+    respondBy: string | null;
     reviews: { fromUserId: string }[];
   } | null;
 };
@@ -40,8 +45,6 @@ type ConversationPayload = {
 export function ChatRoom({ conversationId, meId }: { conversationId: string; meId: string }) {
   const [data, setData] = useState<ConversationPayload | null>(null);
   const [text, setText] = useState("");
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState("");
   const [error, setError] = useState("");
 
   async function load() {
@@ -74,42 +77,14 @@ export function ChatRoom({ conversationId, meId }: { conversationId: string; meI
     }
   }
 
-  async function confirmDeal() {
-    const res = await fetch(`/api/conversations/${conversationId}/deal`, { method: "POST" });
-    if (!res.ok) {
-      const json = await res.json();
-      setError(json.error || "確認失敗");
-      return;
-    }
-    await load();
-  }
-
-  async function submitReview() {
-    if (!data?.deal) return;
-    const res = await fetch("/api/reviews", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dealId: data.deal.id, rating, comment }),
-    });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(json.error || "評分失敗");
-      return;
-    }
-    setComment("");
-    await load();
-  }
-
   if (!data || !other) return <p className="text-[var(--muted)]">載入對話…</p>;
 
   const topicTitle = data.listing?.title ?? data.auction?.title ?? "對話";
   const topicHref = data.listing ? `/listings/${data.listing.id}` : data.auction ? `/auctions/${data.auction.id}` : "/messages";
-  const isAuctionChat = Boolean(data.auction && !data.listing);
   const isBuyer = data.buyerId === meId;
-  const iConfirmed = isBuyer ? data.deal?.confirmedByBuyer : data.deal?.confirmedBySeller;
-  const theyConfirmed = isBuyer ? data.deal?.confirmedBySeller : data.deal?.confirmedByBuyer;
-  const completed = Boolean(data.deal?.completedAt);
-  const iReviewed = data.deal?.reviews.some((r) => r.fromUserId === meId);
+  const trade = data.trade;
+  const completed = trade?.status === "COMPLETED";
+  const iReviewed = Boolean(trade?.reviews.some((r) => r.fromUserId === meId));
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
@@ -163,41 +138,34 @@ export function ChatRoom({ conversationId, meId }: { conversationId: string; meI
           )}
         </div>
         <div className="space-y-2">
-          <div className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">成交</div>
-          {isAuctionChat ? (
-            <p className="text-sm text-[var(--muted)]">呢個係拍賣得標對話。請跟賣家預設交收同付款方法傾妥。</p>
-          ) : (
+          <div className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">交易</div>
+          {!trade && (
+            <p className="text-sm text-[var(--muted)]">
+              未開保留單。賣家保留或者雙方同意出價之後，會喺「交易中」跟進發貨同收貨。
+            </p>
+          )}
+          {trade && trade.status !== "COMPLETED" && (
             <>
-              <p className="text-sm text-[var(--muted)]">平台唔經手錢。線下交收後，雙方確認就可以互評。</p>
-              {!completed && (
-                <button className="btn-primary w-full" type="button" onClick={confirmDeal} disabled={Boolean(iConfirmed)}>
-                  {iConfirmed ? "等對方確認" : "我確認已成交"}
-                </button>
-              )}
-              {iConfirmed && !completed && (
-                <p className="text-xs text-[var(--muted)]">{theyConfirmed ? "處理緊…" : "已記錄你嘅確認。"}</p>
-              )}
-              {completed && <p className="text-sm font-bold text-emerald-700">雙方已確認成交</p>}
+              <p className="text-sm text-[var(--muted)]">賣家先確認發貨，你收到之後買家先確認收貨。</p>
+              <TradeActions
+                tradeId={trade.id}
+                isSeller={!isBuyer}
+                isBuyer={isBuyer}
+                sellerShipped={Boolean(trade.sellerShippedAt)}
+                buyerReceived={Boolean(trade.buyerReceivedAt)}
+                source={trade.source}
+                winnerAcked={Boolean(trade.winnerAckAt)}
+                respondBy={trade.respondBy}
+              />
             </>
           )}
+          {completed && <p className="text-sm font-bold text-emerald-500">交易已完成</p>}
+          <Link className="inline-block text-sm underline" href="/trades">
+            去交易中
+          </Link>
         </div>
-        {!isAuctionChat && completed && !iReviewed && (
-          <div className="space-y-2">
-            <div className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">評價對方</div>
-            <select className="field" value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-              {[5, 4, 3, 2, 1].map((n) => (
-                <option key={n} value={n}>
-                  {n} 星
-                </option>
-              ))}
-            </select>
-            <textarea className="field min-h-24" value={comment} onChange={(e) => setComment(e.target.value)} placeholder="交易順暢嗎？卡況準嗎？" />
-            <button className="btn-primary w-full" type="button" onClick={submitReview}>
-              送出評分
-            </button>
-          </div>
-        )}
-        {!isAuctionChat && iReviewed && <p className="text-sm font-semibold">你已經評過呢單。</p>}
+        {completed && trade && !iReviewed && <ReviewForm tradeId={trade.id} otherName={other.displayName} compact />}
+        {completed && iReviewed && <p className="text-sm font-semibold">你已經評過呢單。</p>}
         {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
       </aside>
     </div>

@@ -35,6 +35,12 @@ export async function GET(_req: Request, { params }: Params) {
     return NextResponse.json({ error: "找不到對話" }, { status: 404 });
   }
 
+  const trade = await prisma.trade.findFirst({
+    where: { conversationId: id, status: { not: "CANCELLED" } },
+    orderBy: { createdAt: "desc" },
+    include: { reviews: { select: { fromUserId: true } } },
+  });
+
   await prisma.conversation.update({
     where: { id },
     data:
@@ -45,6 +51,7 @@ export async function GET(_req: Request, { params }: Params) {
 
   return NextResponse.json({
     ...conversation,
+    trade,
     listing: conversation.listing
       ? { ...conversation.listing, images: parseImages(conversation.listing.images) }
       : null,

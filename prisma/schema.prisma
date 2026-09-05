@@ -148,8 +148,10 @@ model Deal {
 
 model Review {
   id         String   @id @default(cuid())
-  dealId     String
-  deal       Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  dealId     String?
+  deal       Deal?    @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  tradeId    String?
+  trade      Trade?   @relation(fields: [tradeId], references: [id], onDelete: Cascade)
   fromUserId String
   toUser     User     @relation("ReviewsReceived", fields: [toUserId], references: [id], onDelete: Cascade)
   fromUser   User     @relation("ReviewsGiven", fields: [fromUserId], references: [id], onDelete: Cascade)
@@ -159,6 +161,7 @@ model Review {
   createdAt  DateTime @default(now())
 
   @@unique([dealId, fromUserId])
+  @@unique([tradeId, fromUserId])
 }
 
 model Favorite {
@@ -241,6 +244,7 @@ model Trade {
   sellerShippedAt DateTime?
   buyerReceivedAt DateTime?
   completedAt     DateTime?
+  reviews         Review[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 }

@@ -508,7 +508,7 @@ async function main() {
         completedAt: doneAt,
       },
     });
-    await prisma.trade.create({
+    const createdTrade = await prisma.trade.create({
       data: {
         listingId: listing.id,
         buyerId: buyer.id,
@@ -532,6 +532,7 @@ async function main() {
     await prisma.review.create({
       data: {
         dealId: deal.id,
+        tradeId: createdTrade.id,
         fromUserId: buyer.id,
         toUserId: listing.sellerId,
         rating: 4 + (i % 2),
@@ -542,6 +543,7 @@ async function main() {
       await prisma.review.create({
         data: {
           dealId: deal.id,
+          tradeId: createdTrade.id,
           fromUserId: listing.sellerId,
           toUserId: buyer.id,
           rating: 5,

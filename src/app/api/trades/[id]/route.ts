@@ -93,39 +93,30 @@ export async function PATCH(req: Request, { params }: Params) {
   }
 
   if (action === "ship") {
-    if (!isSeller) return NextResponse.json({ error: "只有賣家可以確認發貨／交收" }, { status: 403 });
-    const updated = await prisma.trade.update({
+    if (!isSeller) return NextResponse.json({ error: "只有賣家可以確認發貨" }, { status: 403 });
+    await prisma.trade.update({
       where: { id },
       data: { sellerShippedAt: trade.sellerShippedAt ?? new Date() },
     });
     await notifyUser(trade.buyerId, {
       type: NOTIFICATION_TYPE.TRADE,
-      title: "賣家已確認發貨／交收",
-      body: `「${title}」等你確認收貨`,
+      title: "賣家已發貨，請確認收貨",
+      body: `「${title}」賣家已確認發貨。你收到貨之後，去「交易中」確認收貨。`,
       href: "/trades",
       listingId: trade.listingId,
       shopId: trade.sellerId,
     });
-    if (updated.sellerShippedAt && updated.buyerReceivedAt) {
-      const done = await completeTrade(id);
-      if (done.listing) await notifyListingSold(done.listing);
-    }
     return NextResponse.json({ ok: true });
   }
 
   if (action === "receive") {
     if (!isBuyer) return NextResponse.json({ error: "只有買家可以確認收貨" }, { status: 403 });
+    if (!trade.sellerShippedAt) {
+      return NextResponse.json({ error: "賣家未確認發貨，暫時唔可以確認收貨" }, { status: 400 });
+    }
     const updated = await prisma.trade.update({
       where: { id },
       data: { buyerReceivedAt: trade.buyerReceivedAt ?? new Date() },
-    });
-    await notifyUser(trade.sellerId, {
-      type: NOTIFICATION_TYPE.TRADE,
-      title: "買家已確認收貨",
-      body: `「${title}」買家確認收到`,
-      href: "/trades",
-      listingId: trade.listingId,
-      shopId: trade.sellerId,
     });
     if (updated.sellerShippedAt && updated.buyerReceivedAt) {
       const done = await completeTrade(id);

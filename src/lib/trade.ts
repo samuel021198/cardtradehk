@@ -65,7 +65,7 @@ export async function reserveListing(opts: {
     data: {
       conversationId: conversation.id,
       senderId: opts.actorId,
-      body: `商品已保留。${sourceText}。請去「交易中」確認交收／發貨同收貨。`,
+      body: `商品已保留。${sourceText}。流程：賣家先確認發貨，買家再確認收貨，完成後去「交易中」互評。`,
     },
   });
 
@@ -86,7 +86,7 @@ export async function completeTrade(tradeId: string) {
   const trade = await prisma.trade.update({
     where: { id: tradeId },
     data: { status: TRADE_STATUS.COMPLETED, completedAt: new Date() },
-    include: { listing: true },
+    include: { listing: true, auction: true },
   });
   if (trade.listingId) {
     await prisma.listing.update({
@@ -94,5 +94,24 @@ export async function completeTrade(tradeId: string) {
       data: { status: LISTING_STATUS.SOLD },
     });
   }
+  const title = trade.listing?.title ?? trade.auction?.title ?? "交易";
+  await Promise.all([
+    notifyUser(trade.buyerId, {
+      type: NOTIFICATION_TYPE.TRADE,
+      title: "交易完成，請評分",
+      body: `「${title}」買家已確認收貨。去「交易中」評價對方。`,
+      href: "/trades",
+      listingId: trade.listingId,
+      shopId: trade.sellerId,
+    }),
+    notifyUser(trade.sellerId, {
+      type: NOTIFICATION_TYPE.TRADE,
+      title: "交易完成，請評分",
+      body: `「${title}」已完成。去「交易中」評價買家。`,
+      href: "/trades",
+      listingId: trade.listingId,
+      shopId: trade.sellerId,
+    }),
+  ]);
   return trade;
 }

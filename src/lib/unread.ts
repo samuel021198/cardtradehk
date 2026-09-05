@@ -12,8 +12,19 @@ export async function getNavBadges(userId: string) {
       },
     }),
     prisma.trade.findMany({
-      where: { status: TRADE_STATUS.RESERVED, OR: [{ buyerId: userId }, { sellerId: userId }] },
-      select: { buyerId: true, sellerId: true, sellerShippedAt: true, buyerReceivedAt: true },
+      where: {
+        OR: [{ buyerId: userId }, { sellerId: userId }],
+        status: { in: [TRADE_STATUS.RESERVED, TRADE_STATUS.COMPLETED] },
+      },
+      select: {
+        buyerId: true,
+        sellerId: true,
+        status: true,
+        conversationId: true,
+        sellerShippedAt: true,
+        buyerReceivedAt: true,
+        reviews: { select: { fromUserId: true } },
+      },
     }),
     prisma.conversation.findMany({
       where: { OR: [{ buyerId: userId }, { sellerId: userId }] },
@@ -27,9 +38,33 @@ export async function getNavBadges(userId: string) {
     }),
   ]);
 
+  const pendingCompleted = trades.filter(
+    (t) => t.status === TRADE_STATUS.COMPLETED && !t.reviews.some((r) => r.fromUserId === userId) && t.conversationId,
+  );
+  const oldReviewConvos = pendingCompleted.length
+    ? new Set(
+        (
+          await prisma.review.findMany({
+            where: {
+              fromUserId: userId,
+              deal: { conversationId: { in: pendingCompleted.map((t) => t.conversationId as string) } },
+            },
+            select: { deal: { select: { conversationId: true } } },
+          })
+        )
+          .map((r) => r.deal?.conversationId)
+          .filter(Boolean),
+      )
+    : new Set<string>();
+
   const tradeAction = trades.filter((t) => {
+    if (t.status === TRADE_STATUS.COMPLETED) {
+      if (t.reviews.some((r) => r.fromUserId === userId)) return false;
+      if (t.conversationId && oldReviewConvos.has(t.conversationId)) return false;
+      return true;
+    }
     if (t.sellerId === userId) return !t.sellerShippedAt;
-    return !t.buyerReceivedAt;
+    return Boolean(t.sellerShippedAt) && !t.buyerReceivedAt;
   }).length;
 
   const chatUnread = conversations.filter((c) => {

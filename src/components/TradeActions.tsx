@@ -46,7 +46,17 @@ export function TradeActions({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      <ol className="space-y-1 text-xs font-semibold text-[var(--muted)]">
+        <li className={sellerShipped ? "text-emerald-500" : "text-[var(--ink)]"}>
+          1. 賣家確認發貨 {sellerShipped ? "✓" : "· 進行中"}
+        </li>
+        <li className={buyerReceived ? "text-emerald-500" : sellerShipped ? "text-[var(--ink)]" : ""}>
+          2. 買家確認收貨 {buyerReceived ? "✓" : sellerShipped ? "· 等買家" : "· 等發貨後"}
+        </li>
+        <li>3. 雙方互評</li>
+      </ol>
+
       {auction && isBuyer && !winnerAcked && (
         <button className="btn-primary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("ack")}>
           {busy === "ack" ? "確認緊…" : "確認得標，會跟進交收"}
@@ -56,24 +66,32 @@ export function TradeActions({
       {auction && !winnerAcked && respondBy && (
         <p className="text-xs text-[var(--muted)]">確認限期：{new Date(respondBy).toLocaleString("zh-HK")}</p>
       )}
+
       {isSeller && !sellerShipped && (
         <button className="btn-primary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("ship")}>
-          {busy === "ship" ? "更新緊…" : "確認發貨／已交收"}
+          {busy === "ship" ? "更新緊…" : "確認已發貨／已交收"}
         </button>
       )}
-      {isSeller && sellerShipped && <p className="text-sm font-semibold text-emerald-500">你已確認發貨／交收</p>}
-      {isBuyer && !buyerReceived && (
+      {isSeller && sellerShipped && !buyerReceived && (
+        <p className="text-sm font-semibold text-emerald-500">已發貨。等買家確認收貨之後先完成。</p>
+      )}
+
+      {isBuyer && !sellerShipped && (
+        <p className="text-sm text-[var(--muted)]">等賣家確認發貨之後，你先可以確認收貨。</p>
+      )}
+      {isBuyer && sellerShipped && !buyerReceived && (
         <button className="btn-primary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("receive")}>
-          {busy === "receive" ? "更新緊…" : "確認收貨"}
+          {busy === "receive" ? "更新緊…" : "確認已收貨，完成交易"}
         </button>
       )}
       {isBuyer && buyerReceived && <p className="text-sm font-semibold text-emerald-500">你已確認收貨</p>}
+
       {auction && ((isBuyer && !sellerShipped) || (isSeller && overdue && !winnerAcked)) && (
         <button className="btn-secondary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("abandon")}>
           {busy === "abandon" ? "處理緊…" : isSeller ? "標記得標者棄單" : "我要棄單"}
         </button>
       )}
-      {isSeller && !auction && (
+      {isSeller && !auction && !sellerShipped && (
         <button className="btn-secondary w-full" type="button" disabled={Boolean(busy)} onClick={() => act("cancel")}>
           {busy === "cancel" ? "取消緊…" : "取消保留，重新放售"}
         </button>
