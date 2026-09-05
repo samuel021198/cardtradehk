@@ -15,6 +15,7 @@ import { whatsappLink } from "@/lib/phone";
 import { UserAvatar } from "@/components/UserAvatar";
 import { TRADE_STATUS } from "@/lib/constants";
 import { CoverImage } from "@/components/CoverImage";
+import { MoreLikeThis } from "@/components/MoreLikeThis";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +63,7 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
   const stillLive = auctionIsLive(latest.endsAt, latest.status);
 
   return (
+    <div className="space-y-8">
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <section className="space-y-3">
         <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--chip)]">
@@ -145,6 +147,14 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </aside>
+    </div>
+    <MoreLikeThis
+      sellerId={latest.sellerId}
+      sellerName={latest.seller.displayName}
+      game={latest.game}
+      favoritedIds={watch.listingIds}
+      viewerId={session?.user?.id}
+    />
     </div>
   );
 }
