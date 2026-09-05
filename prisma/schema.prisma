@@ -1,0 +1,257 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String         @id @default(cuid())
+  phone                 String         @unique
+  username              String?        @unique
+  passwordHash          String
+  displayName           String
+  avatarUrl             String?
+  whatsapp              String?
+  bio                   String?
+  role                  String         @default("USER")
+  status                String         @default("ACTIVE")
+  canPost               Boolean        @default(true)
+  canChat               Boolean        @default(true)
+  canReview             Boolean        @default(true)
+  canAuction            Boolean        @default(false)
+  deliveryNote          String?
+  paymentNote           String?
+  adminNote             String?
+  auctionAbandons       Int            @default(0)
+  membershipTier        String         @default("NORMAL")
+  createdAt             DateTime       @default(now())
+  listings              Listing[]
+  conversationsAsBuyer  Conversation[] @relation("BuyerConversations")
+  conversationsAsSeller Conversation[] @relation("SellerConversations")
+  messages              Message[]
+  reviewsGiven          Review[]       @relation("ReviewsGiven")
+  reviewsReceived       Review[]       @relation("ReviewsReceived")
+  auctions              Auction[]
+  bids                  Bid[]
+  favorites             Favorite[]
+  shopFollows           ShopFollow[]    @relation("FollowingShops")
+  shopFollowers         ShopFollow[]    @relation("ShopFollowers")
+  notifications         Notification[]
+  offersAsBuyer         Offer[]         @relation("BuyerOffers")
+  offersAsSeller        Offer[]         @relation("SellerOffers")
+  tradesAsBuyer         Trade[]         @relation("BuyerTrades")
+  tradesAsSeller        Trade[]         @relation("SellerTrades")
+  reportsMade           Report[]        @relation("ReportsMade")
+  reportsAgainst        Report[]        @relation("ReportsAgainst")
+}
+
+model Auction {
+  id              String   @id @default(cuid())
+  title           String
+  game            String
+  cardType        String   @default("RAW")
+  condition       String
+  description     String
+  images          String   @default("[]")
+  startingBidHkd  Int
+  minIncrementHkd Int      @default(10)
+  startsAt        DateTime @default(now())
+  endsAt          DateTime
+  status          String   @default("LIVE")
+  extensionCount  Int      @default(0)
+  pinnedAt        DateTime?
+  sellerId        String
+  seller          User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  bids            Bid[]
+  conversations   Conversation[]
+  favorites       Favorite[]
+  trades          Trade[]
+}
+
+model Bid {
+  id         String   @id @default(cuid())
+  auctionId  String
+  auction    Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  bidderId   String
+  bidder     User     @relation(fields: [bidderId], references: [id], onDelete: Cascade)
+  amountHkd  Int
+  createdAt  DateTime @default(now())
+}
+
+model Listing {
+  id            String         @id @default(cuid())
+  title         String
+  game          String
+  cardType      String         @default("RAW")
+  condition     String
+  priceHkd      Int
+  description   String
+  images        String         @default("[]")
+  status        String         @default("ACTIVE")
+  pinnedAt      DateTime?
+  sellerId      String
+  seller        User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  conversations Conversation[]
+  deals         Deal[]
+  favorites     Favorite[]
+  offers        Offer[]
+  trades        Trade[]
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  listingId String?
+  listing   Listing?  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  auctionId String?
+  auction   Auction?  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  buyerId   String
+  sellerId  String
+  buyer     User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller    User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  deal      Deal?
+  buyerLastReadAt  DateTime?
+  sellerLastReadAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([listingId, buyerId])
+  @@unique([auctionId, buyerId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  body           String
+  createdAt      DateTime     @default(now())
+}
+
+model Deal {
+  id                String       @id @default(cuid())
+  conversationId    String       @unique
+  conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  listingId         String
+  listing           Listing      @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  confirmedByBuyer  Boolean      @default(false)
+  confirmedBySeller Boolean      @default(false)
+  completedAt       DateTime?
+  reviews           Review[]
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  dealId     String
+  deal       Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  fromUserId String
+  toUser     User     @relation("ReviewsReceived", fields: [toUserId], references: [id], onDelete: Cascade)
+  fromUser   User     @relation("ReviewsGiven", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUserId   String
+  rating     Int
+  comment    String
+  createdAt  DateTime @default(now())
+
+  @@unique([dealId, fromUserId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId String?
+  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  auctionId String?
+  auction   Auction? @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@unique([userId, auctionId])
+}
+
+model ShopFollow {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("FollowingShops", fields: [userId], references: [id], onDelete: Cascade)
+  shopId    String
+  shop      User     @relation("ShopFollowers", fields: [shopId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, shopId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String
+  href      String
+  listingId String?
+  auctionId String?
+  shopId    String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Offer {
+  id           String   @id @default(cuid())
+  listingId    String
+  listing      Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyerId      String
+  buyer        User     @relation("BuyerOffers", fields: [buyerId], references: [id], onDelete: Cascade)
+  sellerId     String
+  seller       User     @relation("SellerOffers", fields: [sellerId], references: [id], onDelete: Cascade)
+  amountHkd    Int
+  note         String?
+  status       String   @default("PENDING")
+  proposedById String
+  trade        Trade?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([listingId, buyerId])
+}
+
+model Trade {
+  id              String    @id @default(cuid())
+  listingId       String?
+  listing         Listing?  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  auctionId       String?
+  auction         Auction?  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  buyerId         String
+  buyer           User      @relation("BuyerTrades", fields: [buyerId], references: [id], onDelete: Cascade)
+  sellerId        String
+  seller          User      @relation("SellerTrades", fields: [sellerId], references: [id], onDelete: Cascade)
+  offerId         String?   @unique
+  offer           Offer?    @relation(fields: [offerId], references: [id], onDelete: SetNull)
+  conversationId  String?
+  amountHkd       Int
+  source          String    @default("OFFER")
+  status          String    @default("RESERVED")
+  winnerAckAt     DateTime?
+  respondBy       DateTime?
+  sellerShippedAt DateTime?
+  buyerReceivedAt DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  reporterId   String
+  reporter     User     @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetUserId String
+  target       User     @relation("ReportsAgainst", fields: [targetUserId], references: [id], onDelete: Cascade)
+  reason       String
+  status       String   @default("OPEN")
+  createdAt    DateTime @default(now())
+}

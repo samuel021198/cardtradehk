@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #0b0b0b;
+  --ink: #f5f2e8;
+  --muted: #a39a7a;
+  --line: #3a3518;
+  --chip: #1a180c;
+  --accent: #f5d000;
+  --accent-dark: #d4b400;
+  --surface: #141414;
+}
+
+@theme inline {
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-noto);
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, #3a3200 0, transparent 26rem),
+    var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+.field {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 0.9rem;
+  padding: 0.7rem 0.85rem;
+  outline: none;
+}
+
+.field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245, 208, 0, 0.22);
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.7rem 1.1rem;
+  font-weight: 800;
+  transition: 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #111;
+}
+
+.btn-primary:hover {
+  background: var(--accent-dark);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+}
+
+.btn-secondary {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  background: var(--chip);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.chip {
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.chip-on {
+  background: var(--accent);
+  color: #111;
+  border-color: var(--accent);
+}
+
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 0.75rem 1.2rem;
+  font-weight: 800;
+  background: var(--accent);
+  color: #111;
+  border: 2px solid #111;
+  box-shadow: 3px 3px 0 #111;
+}
+
+.file-btn:hover {
+  background: var(--accent-dark);
+}
+
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
