@@ -4,6 +4,7 @@ import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { cloudinaryReady, savePublicImage } from "../src/lib/storage";
+import { DEMO_PRODUCTS } from "./demo-catalog";
 
 const ROOT = process.cwd();
 loadEnv({ path: path.join(ROOT, ".env"), override: true });
@@ -50,105 +51,6 @@ const PEOPLE = [
     bio: "❤️ 專營 Pokémon 日版鑑定\n🃏 旺角／尖沙咀面交\n📦 順豐到付都得",
     deliveryNote: "尖沙咀 K11／旺角朗豪坊，平日 7 點後。",
     paymentNote: "轉數快、PayMe、AlipayHK。",
-  },
-  {
-    username: "try02",
-    phone: "85291000002",
-    displayName: "Marcus Ng",
-    role: "USER",
-    tier: "PRO_MERCHANT",
-    canAuction: true,
-    bio: "深水埗黃金商場長駐。One Piece 同未開盒為主，可小議。",
-    deliveryNote: "深水埗黃金商場 1 樓通道面交。",
-    paymentNote: "PayMe 優先，大額要轉數快。",
-  },
-  {
-    username: "try03",
-    phone: "85291000003",
-    displayName: "Kelly Ip",
-    role: "USER",
-    tier: "PREMIUM",
-    canAuction: true,
-    bio: "Lorcana + Disney 周邊。觀塘工廈交收，歡迎預約睇貨。",
-    deliveryNote: "觀塘成業街工廈，需提前 1 日約。",
-    paymentNote: "轉數快，確認後當日交。",
-  },
-  {
-    username: "try04",
-    phone: "85291000004",
-    displayName: "Jason Ho",
-    role: "USER",
-    tier: "SUPER",
-    canAuction: true,
-    bio: "🏀 球員卡 Prizm／Chrome\n只收品相清楚嘅卡，假卡即報警。",
-    deliveryNote: "九龍灣 MegaBox 星巴克面交。",
-    paymentNote: "PayMe／FPS。",
-  },
-  {
-    username: "try05",
-    phone: "85291000005",
-    displayName: "Chloe Tam",
-    role: "USER",
-    tier: "NORMAL",
-    canAuction: false,
-    bio: "學生黨，主要買 Raw 玩牌。沙田城門河附近交收。",
-    deliveryNote: "沙田新城市廣場 3 期。",
-    paymentNote: "PayMe。",
-  },
-  {
-    username: "try06",
-    phone: "85291000006",
-    displayName: "Adrian Lam",
-    role: "USER",
-    tier: "NORMAL",
-    canAuction: true,
-    bio: "中環返工，lunch 時間可以中環街市交收。收藏 PSA。",
-    deliveryNote: "中環街市地下，工作日 12:30–14:00。",
-    paymentNote: "轉數快。",
-  },
-  {
-    username: "try07",
-    phone: "85291000007",
-    displayName: "Natalie Yuen",
-    role: "USER",
-    tier: "PREMIUM",
-    canAuction: true,
-    bio: "Riftbound 同新遊戲開箱。歡迎交換，唔好問低過市價太多。",
-    deliveryNote: "銅鑼灣時代廣場地面。",
-    paymentNote: "PayMe / 現金（面交）。",
-  },
-  {
-    username: "try08",
-    phone: "85291000008",
-    displayName: "Ryan Cheung",
-    role: "USER",
-    tier: "NORMAL",
-    canAuction: true,
-    bio: "夜貓，深夜先覆。專收 One Piece SEC／SP。",
-    deliveryNote: "旺角先達廣場，晚上 10 點後都得。",
-    paymentNote: "轉數快，要 screenshot。",
-  },
-  {
-    username: "try09",
-    phone: "85291000009",
-    displayName: "Irene Mak",
-    role: "USER",
-    tier: "SUPER",
-    canAuction: true,
-    bio: "書店兼賣卡。喜歡講故事嘅 Enchanted／Alt Art。",
-    deliveryNote: "上環樓梯街附近，訊息約。",
-    paymentNote: "FPS／PayMe。",
-  },
-  {
-    username: "try10",
-    phone: "85291000010",
-    displayName: "Derek Poon",
-    role: "USER",
-    tier: "PRO_MERCHANT",
-    canAuction: true,
-    bio: "旺角夜市出身，Pokémon 盒貨同 case 都有。批量可再平。",
-    deliveryNote: "旺角彌敦道／登打士街交界。",
-    paymentNote: "大額轉數快，細額 PayMe。",
   },
 ] as const;
 
@@ -223,7 +125,7 @@ async function download(url: string, dest: string) {
 function copyAvatars() {
   mkdirSync(path.join(UPLOAD, "avatars"), { recursive: true });
   mkdirSync(path.join(UPLOAD, "cards"), { recursive: true });
-  const names = ["admin01", ...Array.from({ length: 10 }, (_, i) => `try${String(i + 1).padStart(2, "0")}`)];
+  const names = ["admin01", "try01"];
   for (const name of names) {
     const src = path.join(AVATAR_SRC, `avatar-${name}.png`);
     const dest = path.join(UPLOAD, "avatars", `${name}.png`);
@@ -317,14 +219,7 @@ async function main() {
   console.log("Copy avatars…");
   copyAvatars();
 
-  console.log("Fetch live card catalog…");
-  const pokemon = await fetchPokemon();
-  const catalog = [...pokemon, ...EXTRA];
-  while (catalog.length < 80) {
-    const base = EXTRA[catalog.length % EXTRA.length];
-    catalog.push({ ...base, title: `${base.title} · lot ${catalog.length + 1}` });
-  }
-  const items = await materializeImages(catalog.slice(0, 90));
+  const items = await materializeImages(DEMO_PRODUCTS);
   console.log(`Catalog ${items.length} products, with images ${items.filter((x) => x.local.length).length}`);
 
   console.log("Wipe existing users (cascade listings/trades)…");
@@ -362,8 +257,8 @@ async function main() {
   const createdListings = [];
   const createdAuctions = [];
   for (const [index, item] of items.entries()) {
-    const seller = pick(testers, index + item.title.length);
-    const asAuction = index % 5 === 0 && seller.canAuction;
+    const seller = testers[0] ?? admin;
+    const asAuction = false;
     if (asAuction) {
       const hours = [24, 72, 120, 168][index % 4];
       const startsAt = new Date(Date.now() - (index % 3) * 3600_000);
@@ -385,7 +280,7 @@ async function main() {
       });
       createdAuctions.push(auction);
     } else {
-      const status = index % 17 === 0 ? "SOLD" : index % 13 === 0 ? "RESERVED" : "ACTIVE";
+      const status = "ACTIVE";
       const listing = await prisma.listing.create({
         data: {
           title: item.title,
@@ -410,6 +305,16 @@ async function main() {
 
   async function otherBuyer(sellerId: string, salt: number) {
     return testers.filter((u) => u.id !== sellerId)[salt % (testers.length - 1)];
+  }
+
+  if (testers.length < 2) {
+    console.log({
+      users: users.length,
+      listings: createdListings.length,
+      auctions: createdAuctions.length,
+      admin: admin.username,
+    });
+    return;
   }
 
   console.log("Social graph + offers/trades/reviews…");
