@@ -88,7 +88,7 @@ export function ChatRoom({ conversationId, meId }: { conversationId: string; meI
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
-      <section className="card flex min-h-[70vh] flex-col">
+      <section className="card flex min-h-[60vh] flex-col md:min-h-[70vh]">
         <div className="border-b border-[var(--line)] p-4">
           <Link className="font-black hover:text-[var(--accent)]" href={topicHref}>
             {topicTitle}

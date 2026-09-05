@@ -50,7 +50,7 @@ export default async function FavoritesPage() {
       <section className="card p-6">
         <p className="text-sm font-bold text-[var(--accent)]">收藏</p>
         <h1 className="mt-1 text-3xl font-black tracking-tight">我的收藏</h1>
-        <p className="mt-2 text-[var(--muted)]">收藏商品用帖上面嘅心心；收藏商店喺賣家頁撳「關注商店」。減價、出售、商店上新貨都會喺「消息」通知你。</p>
+        <p className="mt-2 text-[var(--muted)]">收藏商品用帖上面嘅心心；收藏商店喺賣家頁撳「關注商店」。減價、出售、商店上新貨都會喺「訊息 → 通知」話你知。</p>
       </section>
 
       <section className="space-y-3">
@@ -82,7 +82,7 @@ export default async function FavoritesPage() {
         <h2 className="text-xl font-black">收藏商品 · {listings.length}</h2>
         {listings.length === 0 ? (
           <p className="text-[var(--muted)]">
-            未收藏放售帖。去 <Link className="underline" href="/">買野</Link> 撳心心。
+            未收藏放售帖。去 <Link className="underline" href="/">消費</Link> 撳心心。
           </p>
         ) : (
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">

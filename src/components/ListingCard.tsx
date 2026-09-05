@@ -49,7 +49,7 @@ export function ListingCard({
     <div className="relative">
     <Link
       href={href ?? `/listings/${id}`}
-      className="group block overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group block overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-sm transition md:hover:-translate-y-0.5 md:hover:shadow-md"
     >
       <div className="relative aspect-[4/5] bg-[var(--chip)]">
         <CoverImage src={cover} alt={title} priority={priority} />
@@ -60,7 +60,7 @@ export function ListingCard({
         )}
       </div>
       <div className="space-y-1 p-3">
-        <div className="text-lg font-black text-[var(--accent)]">{priceLabel ?? `HK$${priceHkd}`}</div>
+        <div className="text-base font-black text-[var(--accent)] md:text-lg">{priceLabel ?? `HK$${priceHkd}`}</div>
         <div className="line-clamp-2 text-sm font-semibold">{title}</div>
         <div className="text-xs text-[var(--muted)]">
           {listingMeta(game, cardType, condition)}

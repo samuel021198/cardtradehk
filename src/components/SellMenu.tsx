@@ -1,16 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { BUY_SECTIONS } from "@/lib/buy";
 
-export function BuyMenu() {
+export function SellMenu({ canPost }: { canPost: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-  const params = useSearchParams();
-  const type = pathname === "/" ? (params.get("type") ?? "") : "";
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -28,23 +23,21 @@ export function BuyMenu() {
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
-        消費
+        放售
         <span className="ml-1 text-[var(--muted)]">▾</span>
       </button>
       {open && (
         <div className="absolute right-0 z-50 mt-1 min-w-44 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] py-1 shadow-lg">
-          {BUY_SECTIONS.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`block px-4 py-2 text-sm hover:bg-[var(--chip)] ${type === item.type ? "font-black text-[var(--accent)]" : ""}`}
-              onClick={() => setOpen(false)}
-            >
-              {item.label}
+          {canPost && (
+            <Link href="/listings/new" className="block px-4 py-2 text-sm hover:bg-[var(--chip)]" onClick={() => setOpen(false)}>
+              放售商品
             </Link>
-          ))}
+          )}
+          <Link href="/selling" className="block px-4 py-2 text-sm hover:bg-[var(--chip)]" onClick={() => setOpen(false)}>
+            我的商品
+          </Link>
           <Link
-            href="/trades?role=buy"
+            href="/trades?role=sell"
             className="block border-t border-[var(--line)] px-4 py-2 text-sm hover:bg-[var(--chip)]"
             onClick={() => setOpen(false)}
           >

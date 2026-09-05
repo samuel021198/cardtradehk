@@ -33,12 +33,14 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
           placeholder="搜卡名、系列、關鍵字…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
+          enterKeyHint="search"
         />
-        <button className="btn-primary" type="submit">
-          搜尋
+        <button className="btn-primary shrink-0 px-4" type="submit">
+          <span className="md:hidden">搜</span>
+          <span className="hidden md:inline">搜尋</span>
         </button>
       </form>
-      <div className="flex flex-wrap gap-2">
+      <div className="chip-row md:flex-wrap md:overflow-visible">
         <button type="button" className={`chip ${!game ? "chip-on" : ""}`} onClick={() => apply("")}>
           全部種類
         </button>

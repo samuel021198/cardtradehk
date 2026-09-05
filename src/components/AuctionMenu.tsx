@@ -33,7 +33,7 @@ export function AuctionMenu({ canCreate }: { canCreate: boolean }) {
         <span className="ml-1 text-[var(--muted)]">▾</span>
       </button>
       {open && (
-        <div className="absolute right-0 z-50 mt-1 min-w-40 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] py-1 shadow-lg">
+        <div className="absolute right-0 z-50 mt-1 min-w-44 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] py-1 shadow-lg">
           {AUCTION_SECTIONS.map((item) => (
             <Link
               key={item.label}
@@ -53,6 +53,13 @@ export function AuctionMenu({ canCreate }: { canCreate: boolean }) {
               開拍
             </Link>
           )}
+          <Link
+            href="/trades?source=auction"
+            className="block border-t border-[var(--line)] px-4 py-2 text-sm hover:bg-[var(--chip)]"
+            onClick={() => setOpen(false)}
+          >
+            交易中
+          </Link>
         </div>
       )}
     </div>

@@ -69,13 +69,13 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           </div>
         )}
       </section>
-      <aside className="card space-y-4 p-6">
+      <aside className="card space-y-4 p-4 md:p-6">
         <div className="text-sm font-bold text-[var(--muted)]">
           {listingMeta(listing.game, listing.cardType, listing.condition)}
           {statusText}
         </div>
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-3xl font-black">{listing.title}</h1>
+          <h1 className="text-2xl font-black md:text-3xl">{listing.title}</h1>
           {!isOwner && <FavoriteButton listingId={listing.id} initialFavorited={watch.listingIds.has(listing.id)} />}
         </div>
         <div className="text-3xl font-black text-[var(--accent)]">HK${listing.priceHkd}</div>
