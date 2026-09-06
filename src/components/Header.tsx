@@ -61,7 +61,7 @@ export async function Header() {
                   登入
                 </Link>
                 <Link className="rounded-full bg-[var(--accent)] px-4 py-2 text-black" href="/register">
-                  開戶
+                  申請帳戶
                 </Link>
               </>
             )}

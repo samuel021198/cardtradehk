@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GAMES } from "@/lib/constants";
+import { CATALOG_SORTS, catalogHref, parseCatalogSort } from "@/lib/catalog-sort";
 import { clearSearchHistory, forgetSearch, readSearchHistory, rememberSearch } from "@/lib/search-history";
 
 export function SearchBar({ basePath = "/" }: { basePath?: string }) {
@@ -14,6 +15,8 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
   const [history, setHistory] = useState<string[]>([]);
   const game = params.get("game") ?? "";
   const type = params.get("type") ?? "";
+  const sort = parseCatalogSort(params.get("sort"));
+  const view = params.get("view") === "listings" ? "listings" : "";
 
   useEffect(() => {
     const term = params.get("q") ?? "";
@@ -33,15 +36,22 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  function apply(nextGame = game, nextQ = q, save = true) {
+  function apply(next: { game?: string; q?: string; sort?: string; view?: string; save?: boolean } = {}) {
+    const nextGame = next.game ?? game;
+    const nextQ = next.q ?? q;
+    const nextSort = parseCatalogSort(next.sort ?? sort);
+    const nextView = next.view !== undefined ? next.view : view;
     const term = nextQ.trim();
-    if (save && term.length >= 2) setHistory(rememberSearch(term));
-    const search = new URLSearchParams();
-    if (term) search.set("q", term);
-    if (nextGame) search.set("game", nextGame);
-    if (type) search.set("type", type);
-    const qs = search.toString();
-    router.push(qs ? `${basePath}?${qs}` : basePath);
+    if ((next.save ?? true) && term.length >= 2) setHistory(rememberSearch(term));
+    router.push(
+      catalogHref(basePath, {
+        q: term,
+        game: nextGame,
+        type,
+        sort: nextGame ? nextSort : undefined,
+        view: basePath === "/" ? nextView : undefined,
+      }),
+    );
     setOpen(false);
   }
 
@@ -56,7 +66,7 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
       if (q.trim() === current) return;
       if (q.trim().length === 0 && !current) return;
       if (q.trim().length > 0 && q.trim().length < 2) return;
-      apply(game, q);
+      apply({ q });
     }, 380);
     return () => window.clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,7 +112,7 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
                     className="min-w-0 flex-1 truncate px-3 py-2.5 text-left text-sm font-semibold"
                     onClick={() => {
                       setQ(item);
-                      apply(game, item);
+                      apply({ q: item });
                     }}
                   >
                     {item}
@@ -135,7 +145,7 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
               className={`chip ${q.trim() === item ? "chip-on" : ""}`}
               onClick={() => {
                 setQ(item);
-                apply(game, item);
+                apply({ q: item });
               }}
             >
               {item}
@@ -147,7 +157,7 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
         </div>
       )}
       <div className="chip-row md:flex-wrap md:overflow-visible">
-        <button type="button" className={`chip ${!game ? "chip-on" : ""}`} onClick={() => apply("", q, false)}>
+        <button type="button" className={`chip ${!game ? "chip-on" : ""}`} onClick={() => apply({ game: "", sort: "newest", view: "", save: false })}>
           全部種類
         </button>
         {GAMES.map((item) => (
@@ -155,12 +165,27 @@ export function SearchBar({ basePath = "/" }: { basePath?: string }) {
             key={item.value}
             type="button"
             className={`chip ${game === item.value ? "chip-on" : ""}`}
-            onClick={() => apply(item.value, q, false)}
+            onClick={() => apply({ game: item.value, save: false })}
           >
             {item.label}
           </button>
         ))}
       </div>
+      {game && (
+        <div className="chip-row md:flex-wrap md:overflow-visible">
+          <span className="self-center text-xs font-bold text-[var(--muted)]">排列</span>
+          {CATALOG_SORTS.filter((item) => item.value !== "ending" || basePath !== "/" || view !== "listings").map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              className={`chip ${sort === item.value ? "chip-on" : ""}`}
+              onClick={() => apply({ sort: item.value, save: false })}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

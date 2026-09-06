@@ -10,6 +10,8 @@ datasource db {
 model User {
   id                    String         @id @default(cuid())
   phone                 String         @unique
+  email                 String?        @unique
+  emailVerifiedAt       DateTime?
   username              String?        @unique
   passwordHash          String
   displayName           String
@@ -247,6 +249,18 @@ model Trade {
   reviews         Review[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+}
+
+model PendingSignup {
+  id           String   @id @default(cuid())
+  phone        String   @unique
+  email        String   @unique
+  displayName  String
+  passwordHash String
+  codeHash     String
+  sentAt       DateTime @default(now())
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
 }
 
 model Report {

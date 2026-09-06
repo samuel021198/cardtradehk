@@ -10,17 +10,19 @@ import { auth } from "@/lib/auth";
 import { viewerWatchState } from "@/lib/watch";
 import { auctionSearchWhere, scoreCatalogItem, searchHint } from "@/lib/search";
 import { sellerTrustMap } from "@/lib/seller-trust";
+import { auctionOrderBy, parseCatalogSort } from "@/lib/catalog-sort";
 
 export const dynamic = "force-dynamic";
 
 export default async function AuctionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; game?: string; type?: string }>;
+  searchParams: Promise<{ q?: string; game?: string; type?: string; sort?: string }>;
 }) {
-  const { q = "", game = "", type = "" } = await searchParams;
+  const { q = "", game = "", type = "", sort: sortRaw = "" } = await searchParams;
   const cardType = isValidCardType(type) ? type : "";
   const section = buySectionLabel(cardType);
+  const sort = parseCatalogSort(game ? sortRaw : q.trim() ? "newest" : "ending");
   const [session, auctions] = await Promise.all([
     auth(),
     prisma.auction.findMany({
@@ -33,8 +35,8 @@ export default async function AuctionsPage({
         seller: { select: { displayName: true } },
         bids: { orderBy: { amountHkd: "desc" }, take: 1 },
       },
-      orderBy: { endsAt: "asc" },
-      take: q.trim() ? 80 : 24,
+      orderBy: auctionOrderBy(sort),
+      take: q.trim() ? 80 : 48,
     }),
   ]);
   const ranked = q.trim()
@@ -43,7 +45,11 @@ export default async function AuctionsPage({
           scoreCatalogItem({ ...b, sellerName: b.seller.displayName }, q) -
           scoreCatalogItem({ ...a, sellerName: a.seller.displayName }, q),
       )
-    : auctions;
+    : sort === "price"
+      ? [...auctions].sort(
+          (a, b) => currentBid(a.startingBidHkd, a.bids[0]?.amountHkd) - currentBid(b.startingBidHkd, b.bids[0]?.amountHkd),
+        )
+      : auctions;
   const watch = await viewerWatchState(session?.user?.id);
   const trust = await sellerTrustMap(ranked.map((item) => item.sellerId));
 
